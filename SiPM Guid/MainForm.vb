@@ -9,6 +9,11 @@ Imports System.Text
 Imports DT5550W_P_lib.DT5550W_HAL
 Imports DT5550W_P_lib.DT5550W_PETIROC
 
+Imports System.Net.Sockets
+
+Imports System.Net
+Imports System.Threading
+
 Public Class MainForm
 
     Public GBL_ASIC_MODEL As t_AsicModels
@@ -768,11 +773,14 @@ Public Class MainForm
 
 
     End Sub
-
+    Dim TCPServerCommand As TCPServerHERD
     Public Sub MDIParent_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         '  rdc = New MADAReadOut
         '  rdc.caller = Me
         ' rdc.ConnectToBoard(board1, board2)
+        TCPServerCommand = New TCPServerHERD
+        TCPServerCommand.StartServer(Me)
+
         DTList = New List(Of DT5550W_HAL)
         If Connection.ShowDialog() Then
             Dim newDt As New DT5550W_HAL
@@ -860,7 +868,7 @@ Public Class MainForm
 
 
 
-        Timer3.Enabled = True 
+        Timer3.Enabled = True
 
     End Sub
 
@@ -1401,24 +1409,24 @@ Public Class MainForm
                 Dim strline = ""
 
                 strline = ""
-                        strline &= FST("ID")
-                        strline &= FST("ASIC")
-                        strline &= FST("EventCounter")
-                        strline &= FST("RUN_EventTimeCodeLSB")
-                        strline &= FST("RUN_EventTimecode_ns")
-                        strline &= FST("T0_to_Event_Timecode")
-                        strline &= FST("T0_to_Event_Timecode_ns")
-                        strline &= FST("Trigger_ID")
-                        strline &= FST("Validation_ID")
-                        strline &= FST("Flags")
-                        'strline = "ID;ASIC;EventCounter;RUN_EventTimeCodeLSB;RUN_EventTimecode_ns;T0_to_Event_Timecode;T0_to_Event_Timecode_ns;Trigger_ID;Validation_ID;Flags;"
-                        For i = 0 To BI.channelsPerAsic - 1
+                strline &= FST("ID")
+                strline &= FST("ASIC")
+                strline &= FST("EventCounter")
+                strline &= FST("RUN_EventTimeCodeLSB")
+                strline &= FST("RUN_EventTimecode_ns")
+                strline &= FST("T0_to_Event_Timecode")
+                strline &= FST("T0_to_Event_Timecode_ns")
+                strline &= FST("Trigger_ID")
+                strline &= FST("Validation_ID")
+                strline &= FST("Flags")
+                'strline = "ID;ASIC;EventCounter;RUN_EventTimeCodeLSB;RUN_EventTimecode_ns;T0_to_Event_Timecode;T0_to_Event_Timecode_ns;Trigger_ID;Validation_ID;Flags;"
+                For i = 0 To BI.channelsPerAsic - 1
                     strline &= FST($"HIT_{i}")
                 Next
-                        For i = 0 To BI.channelsPerAsic - 1
+                For i = 0 To BI.channelsPerAsic - 1
                     strline &= FST($"CHARGE_LG_{i}")
                 Next
-                        For i = 0 To BI.channelsPerAsic - 1
+                For i = 0 To BI.channelsPerAsic - 1
                     strline &= FST($"CHARGE_HG_{i}", IIf(i = BI.channelsPerAsic - 1, True, False))
                 Next
                 'strline = strline.Remove(strline.Length - 1)
@@ -1436,37 +1444,37 @@ Public Class MainForm
 
                 'strline = "ID_CLUSTER;CLUSTER_RUN_Timecode_ns;CLUSTER_Timecode_ns;NEventsInCluster;"
                 strline = ""
-                        strline &= FST("ID_CLUSTER")
-                        strline &= FST("CLUSTER_RUN_Timecode_ns")
-                        strline &= FST("CLUSTER_Timecode_ns")
-                        strline &= FST("NEventsInCluster")
+                strline &= FST("ID_CLUSTER")
+                strline &= FST("CLUSTER_RUN_Timecode_ns")
+                strline &= FST("CLUSTER_Timecode_ns")
+                strline &= FST("NEventsInCluster")
 
-                        For asi = 0 To BI.totalAsics - 1
-                            strline &= FST($"ASIC_{asi}")
-                            strline &= FST($"EventCounter_{asi}")
-                            strline &= FST($"RUN_EventTimeCodeLSB_{asi}")
-                            strline &= FST($"RUN_EventTimecode_ns_{asi}")
-                            strline &= FST($"T0_to_Event_Timecode_{asi}")
-                            strline &= FST($"T0_to_Event_Timecode_ns_{asi}")
-                            strline &= FST($"Trigger_ID_{asi}")
-                            strline &= FST($"Validation_ID_{asi}")
-                            strline &= FST($"Flags_{asi}")
+                For asi = 0 To BI.totalAsics - 1
+                    strline &= FST($"ASIC_{asi}")
+                    strline &= FST($"EventCounter_{asi}")
+                    strline &= FST($"RUN_EventTimeCodeLSB_{asi}")
+                    strline &= FST($"RUN_EventTimecode_ns_{asi}")
+                    strline &= FST($"T0_to_Event_Timecode_{asi}")
+                    strline &= FST($"T0_to_Event_Timecode_ns_{asi}")
+                    strline &= FST($"Trigger_ID_{asi}")
+                    strline &= FST($"Validation_ID_{asi}")
+                    strline &= FST($"Flags_{asi}")
 
 
-                            'strline &= $"ASIC_{asi};EventCounter_{asi};RUN_EventTimeCodeLSB_{asi};RUN_EventTimecode_ns_{asi};T0_to_Event_Timecode_{asi};T0_to_Event_Timecode_ns_{asi};Trigger_ID_{asi};Validation_ID_{asi};Flags_{asi};"
-                            For i = 0 To BI.channelsPerAsic - 1
+                    'strline &= $"ASIC_{asi};EventCounter_{asi};RUN_EventTimeCodeLSB_{asi};RUN_EventTimecode_ns_{asi};T0_to_Event_Timecode_{asi};T0_to_Event_Timecode_ns_{asi};Trigger_ID_{asi};Validation_ID_{asi};Flags_{asi};"
+                    For i = 0 To BI.channelsPerAsic - 1
                         strline &= FST($"HIT_{asi}_{i}")
                     Next
-                            For i = 0 To BI.channelsPerAsic - 1
+                    For i = 0 To BI.channelsPerAsic - 1
                         strline &= FST($"CHARGE_LG_{asi}_{i}")
                     Next
-                            For i = 0 To BI.channelsPerAsic - 1
+                    For i = 0 To BI.channelsPerAsic - 1
                         strline &= FST($"CHARGE_HG_{asi}_{i}")
                     Next
 
-                        Next
+                Next
 
-                        strline = strline.Remove(strline.Length - 1)
+                strline = strline.Remove(strline.Length - 1)
 
                 tx.WriteLine(strline)
 
@@ -3189,19 +3197,19 @@ Public Class MainForm
 
         Next
         If genable >= 0 Then
-                If genable = 1 Then
-                    hvon.Enabled = False
-                    hvoff.Enabled = True
+            If genable = 1 Then
+                hvon.Enabled = False
+                hvoff.Enabled = True
 
-                Else
-                    hvon.Enabled = True
-                    hvoff.Enabled = False
-
-                End If
+            Else
+                hvon.Enabled = True
+                hvoff.Enabled = False
 
             End If
 
-            Dim cps(1024) As UInt32
+        End If
+
+        Dim cps(1024) As UInt32
         If Not IsNothing(CPSMonitor) Then
             ' CPSMonitor.cps.Rows.Clear()
             For Each dt In DTList
@@ -3316,4 +3324,105 @@ Public Class MainForm
         RunFreerunPC()
 
     End Sub
+
+
+    Public Sub StartRunAutomatic()
+
+        Dim g As New RunStart
+                      If GBL_ASIC_MODEL = t_AsicModels.PETIROC Then
+                          g.LockMode(0)
+                      End If
+                      g.Show()
+                      g.StartRun()
+                      Select Case g.cTargetMode.SelectedIndex
+                          Case 0
+                              RUN_TARGET_MODE = TargetMode.FreeRunning
+
+                          Case 1
+                              RUN_TARGET_MODE = TargetMode.Events
+
+                          Case 2
+                              RUN_TARGET_MODE = TargetMode.Clusters
+
+                          Case 3
+                              RUN_TARGET_MODE = TargetMode.Time_ns
+                      End Select
+                      RUN_TARGET_VALUE = g.TargetValue
+                      RunCompleted = False
+                      EnableSaveFile = True
+                      SaveFilePath = g.FilePathName
+
+                      sStatus = "RUNNING"
+                      If g.mode = 0 Then
+                          StartRun()
+                      Else
+                          If g.mode = 1 Then
+                              StartRunPC()
+                          End If
+                      End If
+
+
+    End Sub
+
+    Class TCPServerHERD
+        Public serverSocket As TcpListener
+        Public requestCount As Integer
+        Public clientSocket As TcpClient
+
+        Dim mf As MainForm
+
+        Public Sub ServerThread()
+            serverSocket = New TcpListener(IPAddress.Any, 24)
+            serverSocket.Start()
+            Dim cmd__start() As Byte = {&HFF, &H80, &H0, &H8, &H0, &H0, &H0, &H0, &HEE, &H0, &H0, &H1, &H0, &H0, &H0, &H0}
+            Dim cmd__stop() As Byte = {&HFF, &H80, &H0, &H8, &H0, &H0, &H0, &H0, &HEE, &H0, &H0, &H0, &H0, &H0, &H0, &H0}
+            Console.WriteLine("HERD Server is started ")
+
+
+            requestCount = 0
+
+            While (True)
+                Try
+                    clientSocket = serverSocket.AcceptTcpClient()
+                    Console.WriteLine("Client connected ")
+                    Dim networkStream As NetworkStream =
+                            clientSocket.GetStream()
+                    Dim bytesFrom(15) As Byte
+                    networkStream.Read(bytesFrom, 0, 16)
+
+                    If bytesFrom.SequenceEqual(cmd__start) Then
+                        Console.WriteLine("Start received... ")
+                        mf.Invoke(Sub() mf.StartRunAutomatic())
+                    End If
+
+                    If bytesFrom.SequenceEqual(cmd__stop) Then
+                        Console.WriteLine("Stop received... ")
+                        mf.Invoke(Sub() mf.StopRun())
+                    End If
+
+                    networkStream.Write(bytesFrom, 0, 16)
+
+                    clientSocket.Close()
+                Catch ex As Exception
+                    MsgBox(ex.ToString)
+                End Try
+            End While
+
+
+
+            serverSocket.Stop()
+
+        End Sub
+        Public Sub StartServer(_this As MainForm)
+            mf = _this
+            Dim thread As New Thread(
+              Sub()
+                  ServerThread()
+              End Sub
+            )
+            thread.Start()
+        End Sub
+
+
+    End Class
 End Class
