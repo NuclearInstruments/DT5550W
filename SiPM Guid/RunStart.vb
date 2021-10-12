@@ -4,6 +4,7 @@ Imports Newtonsoft.Json.Converters
 
 Public Class RunStart
 
+    Public ForcedFileName As String = ""
     Public TargetValue As Double = 0
     Public FilePathName As String
     Public mode As Integer
@@ -203,13 +204,20 @@ Public Class RunStart
         serializer.Converters.Add(New JavaScriptDateTimeConverter())
         serializer.NullValueHandling = NullValueHandling.Ignore
 
-        Dim sw As StreamWriter = New StreamWriter(TextBox1.Text & "\" & pRun.Text & ".json")
+
+        Dim fname As String
+        If ForcedFileName <> "" Then
+            fname = ForcedFileName
+        Else
+            fname = TextBox1.Text & "\" & pRun.Text
+        End If
+        Dim sw As StreamWriter = New StreamWriter(fname & ".json")
         Dim writer As JsonWriter = New JsonTextWriter(sw)
         serializer.Formatting = Formatting.Indented
         serializer.Serialize(writer, RIG)
         writer.Close()
 
-        FilePathName = TextBox1.Text & "\" & pRun.Text & ".data"
+        FilePathName = fname & ".data"
 
 
 

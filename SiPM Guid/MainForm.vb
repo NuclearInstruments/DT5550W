@@ -3326,40 +3326,41 @@ Public Class MainForm
     End Sub
 
 
-    Public Sub StartRunAutomatic()
+    Public Sub StartRunAutomatic(fname As String)
 
         Dim g As New RunStart
-                      If GBL_ASIC_MODEL = t_AsicModels.PETIROC Then
-                          g.LockMode(0)
-                      End If
-                      g.Show()
-                      g.StartRun()
-                      Select Case g.cTargetMode.SelectedIndex
-                          Case 0
-                              RUN_TARGET_MODE = TargetMode.FreeRunning
+        If GBL_ASIC_MODEL = t_AsicModels.PETIROC Then
+            g.LockMode(0)
+        End If
+        g.Show()
+        g.ForcedFileName = fname
+        g.StartRun()
+        Select Case g.cTargetMode.SelectedIndex
+            Case 0
+                RUN_TARGET_MODE = TargetMode.FreeRunning
 
-                          Case 1
-                              RUN_TARGET_MODE = TargetMode.Events
+            Case 1
+                RUN_TARGET_MODE = TargetMode.Events
 
-                          Case 2
-                              RUN_TARGET_MODE = TargetMode.Clusters
+            Case 2
+                RUN_TARGET_MODE = TargetMode.Clusters
 
-                          Case 3
-                              RUN_TARGET_MODE = TargetMode.Time_ns
-                      End Select
-                      RUN_TARGET_VALUE = g.TargetValue
-                      RunCompleted = False
-                      EnableSaveFile = True
-                      SaveFilePath = g.FilePathName
+            Case 3
+                RUN_TARGET_MODE = TargetMode.Time_ns
+        End Select
+        RUN_TARGET_VALUE = g.TargetValue
+        RunCompleted = False
+        EnableSaveFile = True
+        SaveFilePath = g.FilePathName
 
-                      sStatus = "RUNNING"
-                      If g.mode = 0 Then
-                          StartRun()
-                      Else
-                          If g.mode = 1 Then
-                              StartRunPC()
-                          End If
-                      End If
+        sStatus = "RUNNING"
+        If g.mode = 0 Then
+            StartRun()
+        Else
+            If g.mode = 1 Then
+                StartRunPC()
+            End If
+        End If
 
 
     End Sub
@@ -3371,11 +3372,21 @@ Public Class MainForm
 
         Dim mf As MainForm
 
+        Public Shared Function UnixTimeStampToDateTime(ByVal unixTimeStamp As Double) As DateTime
+            Dim dateTime As DateTime = New DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
+            dateTime = dateTime.AddSeconds(unixTimeStamp).ToLocalTime()
+            Return dateTime
+        End Function
+
         Public Sub ServerThread()
             serverSocket = New TcpListener(IPAddress.Any, 24)
             serverSocket.Start()
-            Dim cmd__start() As Byte = {&HFF, &H80, &H0, &H8, &H0, &H0, &H0, &H0, &HEE, &H0, &H0, &H1, &H0, &H0, &H0, &H0}
-            Dim cmd__stop() As Byte = {&HFF, &H80, &H0, &H8, &H0, &H0, &H0, &H0, &HEE, &H0, &H0, &H0, &H0, &H0, &H0, &H0}
+            Dim cmd__header() As Byte = {&HFF, &H80, &H0, &H8}
+            Dim cmd__start() As Byte = {&HEE, &H0, &H0, &H1}
+            Dim cmd__stop() As Byte = {&HEE, &H0, &H0, &H0}
+
+            Dim risp_cmd__start() As Byte = {&HFF, &H80, &H0, &H8, &H0, &H0, &H0, &H0, &HEE, &H0, &H0, &H1, &H0, &H0, &H0, &H0}
+            Dim risp_cmd__stop() As Byte = {&HFF, &H80, &H0, &H8, &H0, &H0, &H0, &H0, &HEE, &H0, &H0, &H0, &H0, &H0, &H0, &H0}
             Console.WriteLine("HERD Server is started ")
 
 
@@ -3387,20 +3398,40 @@ Public Class MainForm
                     Console.WriteLine("Client connected ")
                     Dim networkStream As NetworkStream =
                             clientSocket.GetStream()
-                    Dim bytesFrom(15) As Byte
-                    networkStream.Read(bytesFrom, 0, 16)
+                    Dim bytesFrom(3) As Byte
+                    Dim bytesFrom_cmd(3) As Byte
+                    networkStream.Read(bytesFrom, 0, 4)
 
-                    If bytesFrom.SequenceEqual(cmd__start) Then
-                        Console.WriteLine("Start received... ")
-                        mf.Invoke(Sub() mf.StartRunAutomatic())
+                    If bytesFrom.SequenceEqual(cmd__header) Then
+                        networkStream.Read(bytesFrom, 0, 4)
+                        Dim runnumer As UInt32
+                        Dim trigtype As UInt32
+                        Dim unixtime As UInt32
+                        runnumer = bytesFrom(1) + (bytesFrom(0) << 8)
+                        trigtype = bytesFrom(3) + (bytesFrom(2) << 8)
+                        networkStream.Read(bytesFrom_cmd, 0, 4)
+                        networkStream.Read(bytesFrom, 0, 4)
+                        unixtime = bytesFrom(3) + (bytesFrom(2) << 8) + (bytesFrom(1) << 16) + (bytesFrom(0) << 24)
+                        Dim dd As DateTime = UnixTimeStampToDateTime(unixtime)
+                        Dim filename As String =
+                                "PSD_" &
+                                runnumer.ToString.PadLeft(4, "0") & "_" &
+                                IIf(trigtype = 1, "BEAM", "CAL") & "_" &
+                                dd.Year & dd.Month.ToString.PadLeft(2, "0") & dd.Day.ToString.PadLeft(2, "0") & "_" &
+                                dd.Hour.ToString.PadLeft(2, "0") & dd.Minute.ToString.PadLeft(4, "0") & dd.Second.ToString.PadLeft(2, "0")
+
+                        If bytesFrom_cmd.SequenceEqual(cmd__start) Then
+                            Console.WriteLine("Start received... ")
+                            mf.Invoke(Sub() mf.StartRunAutomatic(filename))
+                            networkStream.Write(risp_cmd__start, 0, 16)
+                        End If
+
+                        If bytesFrom_cmd.SequenceEqual(cmd__stop) Then
+                            Console.WriteLine("Stop received... ")
+                            mf.Invoke(Sub() mf.StopRun())
+                            networkStream.Write(risp_cmd__stop, 0, 16)
+                        End If
                     End If
-
-                    If bytesFrom.SequenceEqual(cmd__stop) Then
-                        Console.WriteLine("Stop received... ")
-                        mf.Invoke(Sub() mf.StopRun())
-                    End If
-
-                    networkStream.Write(bytesFrom, 0, 16)
 
                     clientSocket.Close()
                 Catch ex As Exception
