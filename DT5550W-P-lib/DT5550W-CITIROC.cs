@@ -532,7 +532,10 @@ const UInt32 SCI_REG_CitirocCfg1_REG_CFG0 = 0x100009;
                 return false;
         }
 
-
+        public void Disconnect ()
+        {
+            phy.NI_USB3_Disconnect_M();
+        }
         public int SetHV(bool Enable, float voltage, float compliance)
         {
             voltage = voltage > compliance ? compliance : voltage;

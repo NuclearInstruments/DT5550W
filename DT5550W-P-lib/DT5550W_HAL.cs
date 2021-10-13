@@ -115,6 +115,18 @@ namespace DT5550W_P_lib
 
         }
 
+        public void Disconnect()
+        {
+            if (ConnectedAsic == t_AsicModels.PETIROC)
+            {
+               
+            }
+            else
+            if (ConnectedAsic == t_AsicModels.CITIROC)
+            {
+                CitirocClass.Disconnect();
+            }
+        }
 
         public bool GetDGCardModel(
           ref String model,

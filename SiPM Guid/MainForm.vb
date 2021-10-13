@@ -3456,4 +3456,12 @@ Public Class MainForm
 
 
     End Class
+
+    Private Sub MainForm_FormClosing(sender As Object, e As FormClosingEventArgs) Handles MyBase.FormClosing
+        For i = 0 To DTList.Count - 1
+            DTList(i).Disconnect()
+
+        Next
+        End
+    End Sub
 End Class
