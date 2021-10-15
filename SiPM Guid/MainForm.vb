@@ -15,7 +15,8 @@ Imports System.Net
 Imports System.Threading
 
 Public Class MainForm
-
+    Public DetectorNAME As String = "DETECTOR"
+    Public ProcessFakeEvent As Boolean = True
     Public GBL_ASIC_MODEL As t_AsicModels
     Public TransferSize As Integer = 10
     Public DTList As List(Of DT5550W_HAL)
@@ -1637,74 +1638,80 @@ Public Class MainForm
                         End If
                         TotalEvents += 1
                         CurrentTimecode = e.RunEventTimecode_ns
+                        Dim good = True
+                        If e.Flags = 3 And ProcessFakeEvent = False Then
+                            good = False
+                        End If
 
-                        For t = 0 To MatrixInst.GetUpperBound(0)
-                            MatrixInst(t) = 0
-                        Next
+                        If good = True Then
+                            For t = 0 To MatrixInst.GetUpperBound(0)
+                                MatrixInst(t) = 0
+                            Next
 
-                        Dim EnergySum = 0
-                        Dim EnergySum_HG = 0
-                        Dim SpXIndx = BoardArrayOffset + (e.AsicID * BI.channelsPerAsic)
-                        For j = 0 To BI.channelsPerAsic - 1
-                            Dim c = SpXIndx + j
-                            If c < RawESpectrum.GetUpperBound(0) Then
-                                If e.chargeLG(j) > 0 Then
-                                    RawESpectrum(c, e.chargeLG(j)) += 1
-                                    EnergySum += e.chargeLG(j)
-                                    'RawESpectrum(SperctrumSumIndex, e.charge(j)) += 1
-                                End If
-
-                                If e.chargeHG(j) > 0 Then
-                                    RawE_HG_Spectrum(c, e.chargeHG(j)) += 1
-                                    EnergySum_HG += e.chargeHG(j)
-                                End If
-                                If MatrixHGMode = True Then
-                                    MatrixCumulative(c) += e.chargeHG(j)
-                                    MatrixInst(c) = e.chargeHG(j)
-                                Else
-                                    MatrixCumulative(c) += e.chargeLG(j)
-                                    MatrixInst(c) = e.chargeLG(j)
-                                End If
-
-                                MatrixCumulativePerAsic(e.AsicID, j) = MatrixCumulative(c)
-                                MatrixCumulativePerAsicCount(e.AsicID, j) += 1
-
-
-                                If e.hit(j) = True Then
-                                    Dim time As Double = 0
-                                    time = e.chargeLG(j) 'e.EventTimecode_ns + e.relative_time(j)
-                                    Dim deltaTime = time
-                                    deltaTime = (deltaTime * 1000) / (TimePsBin)
-                                    If deltaTime >= 0 And deltaTime < RawTSpectrum.GetUpperBound(1) Then
-                                        RawTSpectrum(c, deltaTime) += 1
+                            Dim EnergySum = 0
+                            Dim EnergySum_HG = 0
+                            Dim SpXIndx = BoardArrayOffset + (e.AsicID * BI.channelsPerAsic)
+                            For j = 0 To BI.channelsPerAsic - 1
+                                Dim c = SpXIndx + j
+                                If c < RawESpectrum.GetUpperBound(0) Then
+                                    If e.chargeLG(j) > 0 Then
+                                        RawESpectrum(c, e.chargeLG(j)) += 1
+                                        EnergySum += e.chargeLG(j)
+                                        'RawESpectrum(SperctrumSumIndex, e.charge(j)) += 1
                                     End If
-                                    RawHitCounter(0, c) += 1
+
+                                    If e.chargeHG(j) > 0 Then
+                                        RawE_HG_Spectrum(c, e.chargeHG(j)) += 1
+                                        EnergySum_HG += e.chargeHG(j)
+                                    End If
+                                    If MatrixHGMode = True Then
+                                        MatrixCumulative(c) += e.chargeHG(j)
+                                        MatrixInst(c) = e.chargeHG(j)
+                                    Else
+                                        MatrixCumulative(c) += e.chargeLG(j)
+                                        MatrixInst(c) = e.chargeLG(j)
+                                    End If
+
+                                    MatrixCumulativePerAsic(e.AsicID, j) = MatrixCumulative(c)
+                                    MatrixCumulativePerAsicCount(e.AsicID, j) += 1
+
+
+                                    If e.hit(j) = True Then
+                                        Dim time As Double = 0
+                                        time = e.chargeLG(j) 'e.EventTimecode_ns + e.relative_time(j)
+                                        Dim deltaTime = time
+                                        deltaTime = (deltaTime * 1000) / (TimePsBin)
+                                        If deltaTime >= 0 And deltaTime < RawTSpectrum.GetUpperBound(1) Then
+                                            RawTSpectrum(c, deltaTime) += 1
+                                        End If
+                                        RawHitCounter(0, c) += 1
+                                    End If
                                 End If
+                            Next
+
+
+                            Dim spesum_bin
+                            spesum_bin = Math.Round(Math.Min(EnergySum * SumSpectrumGain, 1023))
+                            If spesum_bin > 0 Then
+                                RawESpectrum(SperctrumSumIndex, spesum_bin) += 1
                             End If
-                        Next
+
+                            Dim spesum_bin_HG
+                            spesum_bin_HG = Math.Round(Math.Min(EnergySum_HG * SumSpectrumGain, 1023))
+                            If spesum_bin > 0 Then
+                                RawE_HG_Spectrum(SperctrumSumIndex, spesum_bin_HG) += 1
+                            End If
 
 
-                        Dim spesum_bin
-                        spesum_bin = Math.Round(Math.Min(EnergySum * SumSpectrumGain, 1023))
-                        If spesum_bin > 0 Then
-                            RawESpectrum(SperctrumSumIndex, spesum_bin) += 1
+
+                            pRT4.PostData(RawESpectrum, RawESpectrum.GetUpperBound(1))
+                            pRT4_HG.PostData(RawE_HG_Spectrum, RawE_HG_Spectrum.GetUpperBound(1))
+                            pRT5.PostData(RawTSpectrum, RawTSpectrum.GetUpperBound(1))
+                            pRT6.PostData(RawHitCounter, RawHitCounter.GetUpperBound(1))
+                            pRT7.PostData(AnalogMonitor, AnalogMonitor.GetUpperBound(1))
                         End If
-
-                        Dim spesum_bin_HG
-                        spesum_bin_HG = Math.Round(Math.Min(EnergySum_HG * SumSpectrumGain, 1023))
-                        If spesum_bin > 0 Then
-                            RawE_HG_Spectrum(SperctrumSumIndex, spesum_bin_HG) += 1
-                        End If
-
 
                         TotalEvents += DecodedEvents
-                        pRT4.PostData(RawESpectrum, RawESpectrum.GetUpperBound(1))
-                        pRT4_HG.PostData(RawE_HG_Spectrum, RawE_HG_Spectrum.GetUpperBound(1))
-                        pRT5.PostData(RawTSpectrum, RawTSpectrum.GetUpperBound(1))
-                        pRT6.PostData(RawHitCounter, RawHitCounter.GetUpperBound(1))
-
-                        pRT7.PostData(AnalogMonitor, AnalogMonitor.GetUpperBound(1))
-
                     End While
                 End If ' if EVENT DECODE
 
@@ -1848,9 +1855,11 @@ Public Class MainForm
                             Next
                         Next
                     End If
+                    Dim good_event = False
                     'For i = ClustersBefore To ClustersBefore + DecodedClusters - 1
                     For i = 0 To Clusters_Citiroc.Count - 1
                         Try
+
 
                             'For t = 0 To MatrixInst.GetUpperBound(0)
                             'MatrixInst(t) = 0
@@ -1859,37 +1868,46 @@ Public Class MainForm
                             Dim EnergySum_HG As Double = 0
                             For Each e In Clusters_Citiroc(i).Events
 
-                                Dim SpXIndx = BoardArrayOffset + (e.AsicID * BI.channelsPerAsic)
+                                Dim good = True
+                                If e.Flags = 3 And ProcessFakeEvent = False Then
+                                    good = False
+                                End If
 
-                                For j = 0 To BI.channelsPerAsic - 1
-                                    Dim c = SpXIndx + j
-                                    If c < RawESpectrum.GetUpperBound(0) Then
-                                        If e.chargeLG(j) > 0 Then
-                                            RawESpectrum(c, e.chargeLG(j)) += 1
-                                            EnergySum += e.chargeLG(j)
+                                If good = True Then
+
+                                    good_event = True
+
+                                    Dim SpXIndx = BoardArrayOffset + (e.AsicID * BI.channelsPerAsic)
+
+                                    For j = 0 To BI.channelsPerAsic - 1
+                                        Dim c = SpXIndx + j
+                                        If c < RawESpectrum.GetUpperBound(0) Then
+                                            If e.chargeLG(j) > 0 Then
+                                                RawESpectrum(c, e.chargeLG(j)) += 1
+                                                EnergySum += e.chargeLG(j)
+                                            End If
+
+                                            If e.chargeHG(j) > 0 Then
+                                                RawE_HG_Spectrum(c, e.chargeHG(j)) += 1
+                                                EnergySum_HG += e.chargeHG(j)
+                                            End If
+
+                                            If MatrixHGMode = True Then
+                                                MatrixCumulative(c) += e.chargeHG(j)
+                                            Else
+                                                MatrixCumulative(c) += e.chargeLG(j)
+                                            End If
+                                            MatrixCumulativePerAsic(e.AsicID, j) = MatrixCumulative(c)
+                                            MatrixCumulativePerAsicCount(e.AsicID, j) += 1
+                                            'MatrixInst(c) = e.chargeLG(j)
+                                            If e.hit(j) = True Then
+
+
+                                                RawHitCounter(0, c) += 1
+                                            End If
                                         End If
-
-                                        If e.chargeHG(j) > 0 Then
-                                            RawE_HG_Spectrum(c, e.chargeHG(j)) += 1
-                                            EnergySum_HG += e.chargeHG(j)
-                                        End If
-
-                                        If MatrixHGMode = True Then
-                                            MatrixCumulative(c) += e.chargeHG(j)
-                                        Else
-                                            MatrixCumulative(c) += e.chargeLG(j)
-                                        End If
-                                        MatrixCumulativePerAsic(e.AsicID, j) = MatrixCumulative(c)
-                                        MatrixCumulativePerAsicCount(e.AsicID, j) += 1
-                                        'MatrixInst(c) = e.chargeLG(j)
-                                        If e.hit(j) = True Then
-
-
-                                            RawHitCounter(0, c) += 1
-                                        End If
-                                    End If
-                                Next
-
+                                    Next
+                                End If
 
 
                             Next
@@ -1912,21 +1930,24 @@ Public Class MainForm
                     Next
                     TotalClusters += DecodedClusters
                     TotalEvents += DecodedEvents
-                    pRT4.PostData(RawESpectrum, RawESpectrum.GetUpperBound(1))
-                    pRT4_HG.PostData(RawE_HG_Spectrum, RawE_HG_Spectrum.GetUpperBound(1))
-                    pRT5.PostData(RawTSpectrum, RawTSpectrum.GetUpperBound(1))
-                    pRT6.PostData(RawHitCounter, RawHitCounter.GetUpperBound(1))
-                    If Clusters_Citiroc.Count > 0 Then
-                        For Each e In Clusters_Citiroc.Last.Events
-                            For j = 0 To e.chargeLG.GetUpperBound(0) - 1
-                                AnalogMonitor(e.AsicID, j) = e.chargeLG(j)
+
+                    If good_event = True Then
+                        pRT4.PostData(RawESpectrum, RawESpectrum.GetUpperBound(1))
+                        pRT4_HG.PostData(RawE_HG_Spectrum, RawE_HG_Spectrum.GetUpperBound(1))
+                        pRT5.PostData(RawTSpectrum, RawTSpectrum.GetUpperBound(1))
+                        pRT6.PostData(RawHitCounter, RawHitCounter.GetUpperBound(1))
+                        If Clusters_Citiroc.Count > 0 Then
+                            For Each e In Clusters_Citiroc.Last.Events
+                                For j = 0 To e.chargeLG.GetUpperBound(0) - 1
+                                    AnalogMonitor(e.AsicID, j) = e.chargeLG(j)
+                                Next
                             Next
-                        Next
+                        End If
+                        pRT7.PostData(AnalogMonitor, AnalogMonitor.GetUpperBound(1))
                     End If
-                    pRT7.PostData(AnalogMonitor, AnalogMonitor.GetUpperBound(1))
                 End If 'if CLUSTER_DECODE
 
-            End If
+                End If
 
 
             tProcTime = Now - ProcTime
@@ -3369,12 +3390,12 @@ Public Class MainForm
         Public serverSocket As TcpListener
         Public requestCount As Integer
         Public clientSocket As TcpClient
-
+        Public DetectorNAme As String = ""
         Dim mf As MainForm
 
         Public Shared Function UnixTimeStampToDateTime(ByVal unixTimeStamp As Double) As DateTime
             Dim dateTime As DateTime = New DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
-            dateTime = dateTime.AddSeconds(unixTimeStamp).ToLocalTime()
+            dateTime = dateTime.AddSeconds(unixTimeStamp) '.ToLocalTime()
             Return dateTime
         End Function
 
@@ -3401,6 +3422,7 @@ Public Class MainForm
                     Dim bytesFrom(3) As Byte
                     Dim bytesFrom_cmd(3) As Byte
                     networkStream.Read(bytesFrom, 0, 4)
+                    DetectorNAme = mf.DetectorNAME
 
                     If bytesFrom.SequenceEqual(cmd__header) Then
                         networkStream.Read(bytesFrom, 0, 4)
@@ -3411,14 +3433,14 @@ Public Class MainForm
                         trigtype = bytesFrom(3) + (bytesFrom(2) << 8)
                         networkStream.Read(bytesFrom_cmd, 0, 4)
                         networkStream.Read(bytesFrom, 0, 4)
-                        unixtime = bytesFrom(3) + (bytesFrom(2) << 8) + (bytesFrom(1) << 16) + (bytesFrom(0) << 24)
+                        unixtime = Convert.ToInt32(bytesFrom(3)) + (Convert.ToInt32(bytesFrom(2)) << 8) + (Convert.ToInt32(bytesFrom(1)) << 16) + (Convert.ToInt32(bytesFrom(0)) << 24)
                         Dim dd As DateTime = UnixTimeStampToDateTime(unixtime)
                         Dim filename As String =
-                                "PSD_" &
-                                runnumer.ToString.PadLeft(4, "0") & "_" &
+                                DetectorNAme &
+                                runnumer.ToString.PadLeft(5, "0") & "_" &
                                 IIf(trigtype = 1, "BEAM", "CAL") & "_" &
                                 dd.Year & dd.Month.ToString.PadLeft(2, "0") & dd.Day.ToString.PadLeft(2, "0") & "_" &
-                                dd.Hour.ToString.PadLeft(2, "0") & dd.Minute.ToString.PadLeft(4, "0") & dd.Second.ToString.PadLeft(2, "0")
+                                dd.Hour.ToString.PadLeft(2, "0") & dd.Minute.ToString.PadLeft(2, "0") & dd.Second.ToString.PadLeft(2, "0")
 
                         If bytesFrom_cmd.SequenceEqual(cmd__start) Then
                             Console.WriteLine("Start received... ")

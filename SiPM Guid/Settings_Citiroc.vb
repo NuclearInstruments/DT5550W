@@ -65,6 +65,14 @@ Public Class Settings_Citiroc
 
         cfg.Rebin = speBin.Text
 
+        cfg.DetectorName = DetectorName.Text
+
+        cfg.ValidationEnable = bValidateEnable.Checked
+        cfg.ValidaitionDiscardNotValid = bValidateDiscard.Checked
+        cfg.ValidationSaveFakeEvents = bValidateFake.Checked
+        cfg.ValidationAcceptanceWindow = bValidateWin.Value
+        cfg.ValidationProcessLiveFakeEvent = processFake.Checked
+
         ReDim cfg.sA(asicCount)
 
         For q = 0 To asicCount - 1
@@ -135,6 +143,14 @@ Public Class Settings_Citiroc
         cfg.TriggerMode = "Time"
         cfg.TriggerLatch = True
         cfg.HoldDelay = 10
+
+        cfg.DetectorName = "DETECTOR"
+
+        cfg.ValidationEnable = False
+        cfg.ValidaitionDiscardNotValid = False
+        cfg.ValidationSaveFakeEvents = False
+        cfg.ValidationAcceptanceWindow = 300
+        cfg.ValidationProcessLiveFakeEvent = False
 
         LabelHoldNs.Text = Math.Round(HoldDelay.Value * 1000 / 160, 0) & " ns"
 
@@ -230,6 +246,13 @@ Public Class Settings_Citiroc
             LabelHoldNs.Text = Math.Round(HoldDelay.Value * 1000 / 160, 0) & " ns"
 
             speBin.Text = cfg.Rebin
+            DetectorName.Text = cfg.DetectorName
+
+            bValidateEnable.Checked = cfg.ValidationEnable
+            bValidateDiscard.Checked = cfg.ValidaitionDiscardNotValid
+            bValidateFake.Checked = cfg.ValidationSaveFakeEvents
+            bValidateWin.Value = cfg.ValidationAcceptanceWindow
+            processFake.Checked = cfg.ValidationProcessLiveFakeEvent
 
             Dim asC As Integer = IIf(cfg.AsicCount >= asicCount, asicCount, cfg.AsicCount)
 
@@ -789,6 +812,8 @@ Public Class Settings_Citiroc
         End Select
 
         MainForm.MatrixHGMode = IIf(ImgPath.SelectedIndex = 0, False, True)
+        MainForm.DetectorNAME = DetectorName.Text
+        MainForm.ProcessFakeEvent = processFake.Checked
 
     End Sub
 

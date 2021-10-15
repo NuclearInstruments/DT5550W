@@ -207,7 +207,7 @@ Public Class RunStart
 
         Dim fname As String
         If ForcedFileName <> "" Then
-            fname = ForcedFileName
+            fname = TextBox1.Text & "\" & ForcedFileName
         Else
             fname = TextBox1.Text & "\" & pRun.Text
         End If
