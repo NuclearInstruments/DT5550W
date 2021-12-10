@@ -91,11 +91,15 @@
 
     Public Rebin As Integer = 2048
 
-    Public DetectorName As String = "DET"
+
 
     Public ValidationEnable As Boolean = False
     Public ValidaitionDiscardNotValid As Boolean = False
     Public ValidationSaveFakeEvents As Boolean = False
     Public ValidationAcceptanceWindow As Integer = 300
     Public ValidationProcessLiveFakeEvent As Boolean = False
+    Public ValidationMode As Integer = 0
+
+    Public TriggerOutMonoEnable As Boolean = False
+    Public TriggerOutMonoTime As Double = 64
 End Class

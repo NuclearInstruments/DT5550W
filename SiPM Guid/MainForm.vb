@@ -283,7 +283,7 @@ Public Class MainForm
         content4.CloseButtonVisible = False
         plog.Dock = DockStyle.Fill
         content4.Controls.Add(plog)
-        dockPanel.DockBottomPortion = 0.15
+        dockPanel.DockBottomPortion = 0.2
         list_dockPanel.Add(content4)
 
 
@@ -1489,7 +1489,7 @@ Public Class MainForm
         ''THREAD ACQUISIZIONE HARDWARE
         Dim thread_acq As New Task(Sub()
                                        While running
-                                           board.GetRawBuffer(Buffer, TransferSize, 4000, BI.DigitalDataPacketSize, ValidWord)
+                                           board.GetRawBuffer(Buffer, TransferSize, 100, BI.DigitalDataPacketSize, ValidWord)
                                            'dim watch = System.Diagnostics.Stopwatch.StartNew()
                                            board.CitirocPushRawDataInBuffer(Buffer, ValidWord)
 
@@ -2241,7 +2241,7 @@ Public Class MainForm
             DecodedClusters = 0
 
 
-            board.GetRawBuffer(Buffer, TransferSize, 4000, BI.DigitalDataPacketSize, ValidWord)
+            board.GetRawBuffer(Buffer, TransferSize, 5000, BI.DigitalDataPacketSize, ValidWord)
             If EnableSaveFile = True Then   'FILE SAVE
                 If SaveFileType = FileType.BINARY Then
                     For i = 0 To ValidWord - 1
@@ -3400,7 +3400,7 @@ Public Class MainForm
         End Function
 
         Public Sub ServerThread()
-            serverSocket = New TcpListener(IPAddress.Any, 24)
+            serverSocket = New TcpListener(IPAddress.Any, My.Settings.ServerPort)
             serverSocket.Start()
             Dim cmd__header() As Byte = {&HFF, &H80, &H0, &H8}
             Dim cmd__start() As Byte = {&HEE, &H0, &H0, &H1}
@@ -3408,21 +3408,23 @@ Public Class MainForm
 
             Dim risp_cmd__start() As Byte = {&HFF, &H80, &H0, &H8, &H0, &H0, &H0, &H0, &HEE, &H0, &H0, &H1, &H0, &H0, &H0, &H0}
             Dim risp_cmd__stop() As Byte = {&HFF, &H80, &H0, &H8, &H0, &H0, &H0, &H0, &HEE, &H0, &H0, &H0, &H0, &H0, &H0, &H0}
-            Console.WriteLine("HERD Server is started ")
 
+            DetectorNAme = My.Settings.DetectorName
 
             requestCount = 0
 
             While (True)
                 Try
                     clientSocket = serverSocket.AcceptTcpClient()
+                    Dim ipend As Net.IPEndPoint = clientSocket.Client.RemoteEndPoint
+                    mf.AppendToLog(LogMode.mINFO, "Client connected: " + ipend.Address.ToString)
                     Console.WriteLine("Client connected ")
                     Dim networkStream As NetworkStream =
                             clientSocket.GetStream()
                     Dim bytesFrom(3) As Byte
                     Dim bytesFrom_cmd(3) As Byte
                     networkStream.Read(bytesFrom, 0, 4)
-                    DetectorNAme = mf.DetectorNAME
+
 
                     If bytesFrom.SequenceEqual(cmd__header) Then
                         networkStream.Read(bytesFrom, 0, 4)
@@ -3446,12 +3448,14 @@ Public Class MainForm
                             Console.WriteLine("Start received... ")
                             mf.Invoke(Sub() mf.StartRunAutomatic(filename))
                             networkStream.Write(risp_cmd__start, 0, 16)
+                            mf.AppendToLog(LogMode.mINFO, "Starting run: " + filename)
                         End If
 
                         If bytesFrom_cmd.SequenceEqual(cmd__stop) Then
                             Console.WriteLine("Stop received... ")
                             mf.Invoke(Sub() mf.StopRun())
                             networkStream.Write(risp_cmd__stop, 0, 16)
+                            mf.AppendToLog(LogMode.mINFO, "Run stopped")
                         End If
                     End If
 
@@ -3467,13 +3471,23 @@ Public Class MainForm
 
         End Sub
         Public Sub StartServer(_this As MainForm)
-            mf = _this
-            Dim thread As New Thread(
-              Sub()
-                  ServerThread()
-              End Sub
-            )
-            thread.Start()
+
+
+
+
+            If My.Settings.EnableServer = True Then
+                _this.AppendToLog(LogMode.mINFO, "Starting remote control server on port " + My.Settings.ServerPort.ToString)
+                _this.AppendToLog(LogMode.mINFO, "Run data will be stored in " + My.Settings.folderpos)
+                _this.AppendToLog(LogMode.mINFO, "Detector name is " + My.Settings.DetectorName)
+                mf = _this
+                Dim thread As New Thread(
+                  Sub()
+                      ServerThread()
+                  End Sub
+                )
+                thread.Start()
+
+            End If
         End Sub
 
 
@@ -3485,5 +3499,10 @@ Public Class MainForm
 
         Next
         End
+    End Sub
+
+    Private Sub ServerConfigurationToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ServerConfigurationToolStripMenuItem.Click
+        Dim s As New ServerConfig()
+        s.ShowDialog()
     End Sub
 End Class

@@ -504,12 +504,12 @@ namespace DT5550W_P_lib
         }
 
 
-        public void CITIROC_EnableValidation(bool validation, bool discard, bool fakeevent, double timeout)
+        public void CITIROC_EnableValidation(bool validation, bool discard, bool fakeevent, double timeout, UInt32 mode)
         {
             if (ConnectedAsic == t_AsicModels.PETIROC)
                 ;
             if (ConnectedAsic == t_AsicModels.CITIROC)
-                CitirocClass.EnableValidation(validation, discard, fakeevent, timeout);
+                CitirocClass.EnableValidation(validation, discard, fakeevent, timeout, mode);
         }
         
         public void CITIROC_SetHoldDelay(double hd)
@@ -547,5 +547,27 @@ namespace DT5550W_P_lib
 
             return -1;
         }
+
+        public int SetFGPATriggerMask(UInt32 mask_A, UInt32 mask_B, UInt32 mask_C, UInt32 mask_D)
+        {
+            if (ConnectedAsic == t_AsicModels.PETIROC)
+                ;
+            if (ConnectedAsic == t_AsicModels.CITIROC)
+                return CitirocClass.SetFGPATriggerMask(mask_A, mask_B, mask_C, mask_D);
+
+
+            return -1;
+
+        }
+        public int SetTrigOUTMonostable(UInt32 time)
+        {
+            if (ConnectedAsic == t_AsicModels.PETIROC)
+                ;
+            if (ConnectedAsic == t_AsicModels.CITIROC)
+                return CitirocClass.SetTrigOUTMonostable(time);
+
+            return -1;
+        }
+
     }
 }

@@ -65,13 +65,16 @@ Public Class Settings_Citiroc
 
         cfg.Rebin = speBin.Text
 
-        cfg.DetectorName = DetectorName.Text
+
 
         cfg.ValidationEnable = bValidateEnable.Checked
         cfg.ValidaitionDiscardNotValid = bValidateDiscard.Checked
         cfg.ValidationSaveFakeEvents = bValidateFake.Checked
         cfg.ValidationAcceptanceWindow = bValidateWin.Value
         cfg.ValidationProcessLiveFakeEvent = processFake.Checked
+        cfg.ValidationMode = cbValidationMode.SelectedIndex
+        cfg.TriggerOutMonoEnable = TrmonoEn.Checked
+        cfg.TriggerOutMonoTime = TrMonoWidth.Value
 
         ReDim cfg.sA(asicCount)
 
@@ -144,13 +147,16 @@ Public Class Settings_Citiroc
         cfg.TriggerLatch = True
         cfg.HoldDelay = 10
 
-        cfg.DetectorName = "DETECTOR"
+
 
         cfg.ValidationEnable = False
         cfg.ValidaitionDiscardNotValid = False
         cfg.ValidationSaveFakeEvents = False
         cfg.ValidationAcceptanceWindow = 300
         cfg.ValidationProcessLiveFakeEvent = False
+        cfg.ValidationMode = 0
+        cfg.TriggerOutMonoTime = 64
+        cfg.TriggerOutMonoEnable = False
 
         LabelHoldNs.Text = Math.Round(HoldDelay.Value * 1000 / 160, 0) & " ns"
 
@@ -246,13 +252,18 @@ Public Class Settings_Citiroc
             LabelHoldNs.Text = Math.Round(HoldDelay.Value * 1000 / 160, 0) & " ns"
 
             speBin.Text = cfg.Rebin
-            DetectorName.Text = cfg.DetectorName
+
 
             bValidateEnable.Checked = cfg.ValidationEnable
             bValidateDiscard.Checked = cfg.ValidaitionDiscardNotValid
             bValidateFake.Checked = cfg.ValidationSaveFakeEvents
             bValidateWin.Value = cfg.ValidationAcceptanceWindow
             processFake.Checked = cfg.ValidationProcessLiveFakeEvent
+
+            cbValidationMode.SelectedIndex = cfg.ValidationMode
+            TrmonoEn.Checked = cfg.TriggerOutMonoEnable
+            TrMonoWidth.Value = cfg.TriggerOutMonoTime
+
 
             Dim asC As Integer = IIf(cfg.AsicCount >= asicCount, asicCount, cfg.AsicCount)
 
@@ -499,6 +510,14 @@ Public Class Settings_Citiroc
         FileSeparator.Items.Add("Tab")
         FileSeparator.SelectedIndex = 0
 
+
+        cbValidationMode.Items.Add("Level H")
+        cbValidationMode.Items.Add("Edge Pos")
+        cbValidationMode.SelectedIndex = 0
+
+
+        TrmonoEn.Checked = False
+        TrMonoWidth.Value = 64
     End Sub
 
     Private Sub TabPage4_Click(sender As Object, e As EventArgs) Handles TabPage4.Click
@@ -532,14 +551,19 @@ Public Class Settings_Citiroc
 
         End Select
 
+        Dim TRmask(3) As UInt32
 
         For i = 0 To MainForm.DTList.Count - 1
             MainForm.DTList(i).CitirocClass.pCFG.Clear()
             Dim BI As t_BoardInfo = MainForm.DTList(i).GetBoardInfo
+
             For j = 0 To BI.totalAsics - 1
+
                 Dim strPtrc As String
                 Dim ProgramWord() As UInt32 = New UInt32((36) - 1) {}
                 Dim pC As New DT5550W_CITIROC.CitirocConfig
+
+                TRmask(j) = 0
                 For z = 0 To 31
                     pC.sc_cmdInputDac(z) = IIf(gridList(i * BI.totalAsics + j).Rows(z).Cells("Enableb").Value = 0, 0, 1)
                     pC.sc_inputDac(z) = gridList(i * BI.totalAsics + j).Rows(z).Cells("DACb").Value
@@ -554,7 +578,7 @@ Public Class Settings_Citiroc
                     MainForm.CorrPoints(j, z).Offset = gridList(i * BI.totalAsics + j).Rows(z).Cells("Offset").Value
 
                     pC.sc_enPa(z) = 0
-
+                    TRmask(j) += (IIf(gridList(i * BI.totalAsics + j).Rows(z).Cells("TriggerMask").Value = 0, 0L, 1L) << z)
                 Next
 
 
@@ -666,6 +690,8 @@ Public Class Settings_Citiroc
 
             Next
 
+            MainForm.DTList(i).SetFGPATriggerMask(TRmask(0), TRmask(1), TRmask(2), TRmask(3))
+
             MainForm.DTList(i).SetHV(HVon.Checked, Voltage.Value, MaxV.Value)
             MainForm.DTList(i).ConfigureSignalGenerator(True, True, True, True,
                                          SelfFreq.Value)
@@ -718,7 +744,8 @@ Public Class Settings_Citiroc
                     MainForm.DTList(i).ConfigurePC(DT5550W_P_lib.PCMode.PERIODIC_WIN_INT_START, pc_WW.Value, pc_IF.Value, pc_WC.Value)
             End Select
 
-            MainForm.DTList(i).CITIROC_EnableValidation(bValidateEnable.Checked, bValidateDiscard.Checked, bValidateFake.Checked, bValidateWin.Value)
+            MainForm.DTList(i).CITIROC_EnableValidation(bValidateEnable.Checked, bValidateDiscard.Checked, bValidateFake.Checked, bValidateWin.Value, cbValidationMode.SelectedIndex)
+            MainForm.DTList(i).SetTrigOUTMonostable(IIf(TrmonoEn.Checked, TrMonoWidth.Value, 0))
         Next
 
 
@@ -812,7 +839,7 @@ Public Class Settings_Citiroc
         End Select
 
         MainForm.MatrixHGMode = IIf(ImgPath.SelectedIndex = 0, False, True)
-        MainForm.DetectorNAME = DetectorName.Text
+
         MainForm.ProcessFakeEvent = processFake.Checked
 
     End Sub
@@ -1031,6 +1058,14 @@ Public Class Settings_Citiroc
     End Sub
 
     Private Sub ComboBox1_SelectedIndexChanged(sender As Object, e As EventArgs) Handles FileSeparator.SelectedIndexChanged
+
+    End Sub
+
+    Private Sub InternalTriggerPath_CheckedChanged(sender As Object, e As EventArgs) Handles InternalTriggerPath.CheckedChanged
+
+    End Sub
+
+    Private Sub bValidateEnable_CheckedChanged(sender As Object, e As EventArgs) Handles bValidateEnable.CheckedChanged
 
     End Sub
 End Class

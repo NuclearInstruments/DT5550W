@@ -96,7 +96,7 @@
         Dim l14 As New Label
         Dim l15 As New Label
         Dim l16 As New Label
-
+        Dim l17 As New Label
 
 
 
@@ -250,7 +250,7 @@
         tb2.Controls.Add(HVCurrent, 5, 6)
 
 
-        l12.Text = "Trigger ID"
+        l12.Text = "Trg ID"
         l12.TextAlign = ContentAlignment.MiddleCenter
         l12.Dock = DockStyle.Fill
         tb2.Controls.Add(l12, 0, 8)
@@ -262,10 +262,10 @@
         CUR_Trigger.Dock = DockStyle.Fill
         tb2.Controls.Add(CUR_Trigger, 1, 8)
 
-        l13.Text = "Validation ID"
-        l13.TextAlign = ContentAlignment.MiddleCenter
-        l13.Dock = DockStyle.Fill
-        tb2.Controls.Add(l13, 2, 8)
+        l17.Text = "Val ID"
+        l17.TextAlign = ContentAlignment.MiddleCenter
+        l17.Dock = DockStyle.Fill
+        tb2.Controls.Add(l17, 2, 8)
         tb2.Dock = DockStyle.Fill
         CUR_Validation.Text = ""
         CUR_Validation.BackColor = Color.Pink
