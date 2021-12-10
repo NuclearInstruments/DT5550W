@@ -4,6 +4,7 @@ Imports Newtonsoft.Json.Converters
 
 Public Class RunStart
 
+    Public ForcedFileName As String = ""
     Public TargetValue As Double = 0
     Public FilePathName As String
     Public mode As Integer
@@ -95,8 +96,7 @@ Public Class RunStart
         Public Note As String
     End Structure
 
-
-    Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
+    Public Sub StartRun()
         My.Settings.parRun = pRun.Text
         My.Settings.parAcq = pMRun.Text
         MainForm.SaveFolderDefault = TextBox1.Text
@@ -197,49 +197,35 @@ Public Class RunStart
 
         End If
 
-        targetvalue = cTargetValue.Text * targmult
-        RIG.TargetValue = targetvalue
+        TargetValue = cTargetValue.Text * targmult
+        RIG.TargetValue = TargetValue
 
         Dim serializer As JsonSerializer = New JsonSerializer()
         serializer.Converters.Add(New JavaScriptDateTimeConverter())
         serializer.NullValueHandling = NullValueHandling.Ignore
 
-        Dim sw As StreamWriter = New StreamWriter(TextBox1.Text & "\" & pRun.Text & ".json")
+
+        Dim fname As String
+        If ForcedFileName <> "" Then
+            fname = TextBox1.Text & "\" & ForcedFileName
+        Else
+            fname = TextBox1.Text & "\" & pRun.Text
+        End If
+        Dim sw As StreamWriter = New StreamWriter(fname & ".json")
         Dim writer As JsonWriter = New JsonTextWriter(sw)
         serializer.Formatting = Formatting.Indented
         serializer.Serialize(writer, RIG)
         writer.Close()
 
-        FilePathName = TextBox1.Text & "\" & pRun.Text & ".data"
+        FilePathName = fname & ".data"
 
-        'header = "<XML_NUCLEAR_INSTRUMENTS_MADA>" & vbCrLf
-        'header = header & vbTab & "<SYSTEM_INFO>" & vbCrLf
-        'header = header & vbTab & vbTab & "<APPLICATION_NAME>Nuclear Instruments DT5550W Readout System</APPLICATION_NAME>" & vbCrLf
-        'header = header & vbTab & vbTab & "<COMPANY_WEBSITE>http://www.nuclearinstruments.eu</COMPANY_WEBSITE>" & vbCrLf
-        'header = header & vbTab & vbTab & "<APPLICATION_VERSION>" & Application.ProductVersion & "</APPLICATION_VERSION>" & vbCrLf
-        'header = header & vbTab & vbTab & "<BUILD_DATE>" & build_date.ToString("dd-MM-yy") & "</BUILD_DATE>"
-        'header = header & vbTab & "</SYSTEM_INFO>" & vbCrLf
-        'header = header & vbTab & "<ACQUISITION_INFO>" & vbCrLf
-        'header = header & vbTab & vbTab & "<RUN_INFO>" & vbCrLf
-        'header = header & vbTab & vbTab & vbTab & "<RUN_ID>" & My.Settings.parRun & "</RUN_ID>" & vbCrLf
-        'header = header & vbTab & vbTab & vbTab & "<MACHINE_RUN_ID>" & My.Settings.parAcq & "</MACHINE_RUN_ID>" & vbCrLf
-        'header = header & vbTab & vbTab & vbTab & "<DATETIME>" & pDT.Text & "</DATETIME>" & vbCrLf
-        'header = header & vbTab & vbTab & vbTab & "<BIAS>" & pBias.Text & "</BIAS>" & vbCrLf
-        'header = header & vbTab & vbTab & vbTab & "<DETECTOR_BOARD_SN>" & pBoard.Text & "</DETECTOR_BOARD_SN>" & vbCrLf
-        'header = header & vbTab & vbTab & vbTab & "<ACQUISITION_BOARD_SN>" & pAcq.Text & "</ACQUISITION_BOARD_SN>" & vbCrLf
-        'header = header & vbTab & vbTab & vbTab & "<ACQUISITION_BOARD_RC>" & TextBox5.Text & "</ACQUISITION_BOARD_RC>" & vbCrLf
-        'header = header & vbTab & vbTab & vbTab & "<BOARD_COUNT>" & MainForm.DTList.Count & "</BOARD_COUNT>" & vbCrLf
-        'For i = 0 To MainForm.DTList.Count - 1
-        '    header = header & vbTab & vbTab & vbTab & "<BOARD" & i "_ID>" & MainForm.DTList(i).SerialNumber & "</BOARD1_ID>" & vbCrLf
-        'Next
-
-        'header = header & vbTab & vbTab & vbTab & "<BOARD2_ID>" & MainForm.board2_id & "</BOARD2_ID>" & vbCrLf
-        'header = header & vbTab & vbTab & "</RUN_INFO>" & vbCrLf
-        'header = header & vbTab & vbTab & "<CONFIG_INFO>" & vbCrLf
 
 
         Me.DialogResult = DialogResult.OK
         Me.Close()
+    End Sub
+    Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
+        StartRun()
     End Sub
 
     Private Sub Button3_Click(sender As Object, e As EventArgs) Handles Button3.Click

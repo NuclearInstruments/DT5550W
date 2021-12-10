@@ -1,0 +1,2 @@
+"C:\Program Files (x86)\Windows Kits\10\bin\10.0.20348.0\x64\signtool.exe" sign /td SHA256 /fd SHA256 /a /tr "http://timestamp.entrust.net/rfc3161ts2" "SetupSciDigitizerAsic\SetupSciDigitizerAsic\Express\SingleImage\DiskImages\DISK1\setup.exe"
+"C:\Program Files (x86)\Windows Kits\10\bin\10.0.20348.0\x64\signtool.exe" verify /pa /v "SetupSciDigitizerAsic\SetupSciDigitizerAsic\Express\SingleImage\DiskImages\DISK1\setup.exe"

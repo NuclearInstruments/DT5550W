@@ -9,8 +9,14 @@ Imports System.Text
 Imports DT5550W_P_lib.DT5550W_HAL
 Imports DT5550W_P_lib.DT5550W_PETIROC
 
-Public Class MainForm
+Imports System.Net.Sockets
 
+Imports System.Net
+Imports System.Threading
+
+Public Class MainForm
+    Public DetectorNAME As String = "DETECTOR"
+    Public ProcessFakeEvent As Boolean = True
     Public GBL_ASIC_MODEL As t_AsicModels
     Public TransferSize As Integer = 10
     Public DTList As List(Of DT5550W_HAL)
@@ -40,6 +46,10 @@ Public Class MainForm
     Public CurrentHVMax As Double = 25
 
     Public SumSpectrumGain As Double = 25
+
+    Public FileSeparator As String = ";"
+    Public FileFixedSizeB As Boolean = False
+    Public FileFixedSizeI As Integer = 20
 
 
     Public Structure CorrPoint
@@ -84,6 +94,12 @@ Public Class MainForm
     End Enum
     Public RUN_TARGET_MODE As TargetMode
     Public RUN_TARGET_VALUE As Double
+
+    Public sTriggerId As Long
+    Public sValidationId As Long
+    Public sCntrValidated As Long
+    Public sCntrNotValidated As Long
+    Public sCntrNotFake As Long
 
     Public sEventCounter As Long
     Public sClusterCounter As Long
@@ -267,7 +283,7 @@ Public Class MainForm
         content4.CloseButtonVisible = False
         plog.Dock = DockStyle.Fill
         content4.Controls.Add(plog)
-        dockPanel.DockBottomPortion = 0.15
+        dockPanel.DockBottomPortion = 0.2
         list_dockPanel.Add(content4)
 
 
@@ -758,11 +774,14 @@ Public Class MainForm
 
 
     End Sub
-
+    Dim TCPServerCommand As TCPServerHERD
     Public Sub MDIParent_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         '  rdc = New MADAReadOut
         '  rdc.caller = Me
         ' rdc.ConnectToBoard(board1, board2)
+        TCPServerCommand = New TCPServerHERD
+        TCPServerCommand.StartServer(Me)
+
         DTList = New List(Of DT5550W_HAL)
         If Connection.ShowDialog() Then
             Dim newDt As New DT5550W_HAL
@@ -850,7 +869,7 @@ Public Class MainForm
 
 
 
-        Timer3.Enabled = True 
+        Timer3.Enabled = True
 
     End Sub
 
@@ -1289,6 +1308,35 @@ Public Class MainForm
 
     End Sub
 
+    Public Function FST(text As String, Optional last As Boolean = False) As String
+        Dim fx = text
+        If FileFixedSizeB Then
+            fx = text.PadLeft(FileFixedSizeI)
+        End If
+        If last = False Then
+            fx = fx & FileSeparator
+        End If
+        Return fx
+    End Function
+
+    Public Function FSTaU16(arr As UShort(), Optional last As Boolean = False) As String
+        Dim fx As String = ""
+        If FileFixedSizeB Then
+            For i = 0 To arr.Length - 1
+                fx &= arr(i).ToString().PadLeft(FileFixedSizeI) & IIf(i <> arr.Length - 1, FileSeparator, "")
+            Next
+            fx.Remove(fx.Length - 1)
+        Else
+            fx = String.Join(FileSeparator, arr)
+        End If
+
+        If last = False Then
+            fx = fx & FileSeparator
+        End If
+
+        Return fx
+    End Function
+
 
     Public Sub AcquisitionThreadCitiroc(board As DT5550W_HAL, TransferSize As Integer, BoardArrayOffset As Integer)
 
@@ -1322,6 +1370,12 @@ Public Class MainForm
         Dim tx As StreamWriter = Nothing
         Dim bwriter As BinaryWriter = Nothing
 
+        sTriggerId = 0
+        sValidationId = 0
+        sCntrValidated = 0
+        sCntrNotValidated = 0
+        sCntrNotFake = 0
+
         AppendToLog(LogMode.mACQUISITION, "Starting acquisition", BI.SerialNumber)
         If EnableSaveFile = True Then
             AppendToLog(LogMode.mACQUISITION, "List mode save file is enabled", BI.SerialNumber)
@@ -1354,41 +1408,29 @@ Public Class MainForm
 
             If SaveFileType = FileType.CSV And EnableSaveFile = True Then
                 Dim strline = ""
-                Select Case GBL_ASIC_MODEL
-                    Case t_AsicModels.PETIROC
-                        strline = "ID;ASIC;EventCounter;RUN_EventTimeCodeLSB;RUN_EventTimecode_ns;T0_to_Event_Timecode;T0_to_Event_Timecode_ns;"
-                        For i = 0 To BI.channelsPerAsic - 1
-                            strline &= $"HIT_{i};"
-                        Next
-                        For i = 0 To BI.channelsPerAsic - 1
-                            strline &= $"CHARGE_{i};"
-                        Next
-                        For i = 0 To BI.channelsPerAsic - 1
-                            strline &= $"COARSE_{i};"
-                        Next
-                        For i = 0 To BI.channelsPerAsic - 1
-                            strline &= $"FINE_{i};"
-                        Next
-                        For i = 0 To BI.channelsPerAsic - 1
-                            strline &= $"RELATIVETIME_{i};"
-                        Next
-                        strline = strline.Remove(strline.Length - 1)
 
-
-                    Case t_AsicModels.CITIROC
-                        strline = "ID;ASIC;EventCounter;RUN_EventTimeCodeLSB;RUN_EventTimecode_ns;T0_to_Event_Timecode;T0_to_Event_Timecode_ns;"
-                        For i = 0 To BI.channelsPerAsic - 1
-                            strline &= $"HIT_{i};"
-                        Next
-                        For i = 0 To BI.channelsPerAsic - 1
-                            strline &= $"CHARGE_LG_{i};"
-                        Next
-                        For i = 0 To BI.channelsPerAsic - 1
-                            strline &= $"CHARGE_HG_{i};"
-                        Next
-                        strline = strline.Remove(strline.Length - 1)
-
-                End Select
+                strline = ""
+                strline &= FST("ID")
+                strline &= FST("ASIC")
+                strline &= FST("EventCounter")
+                strline &= FST("RUN_EventTimeCodeLSB")
+                strline &= FST("RUN_EventTimecode_ns")
+                strline &= FST("T0_to_Event_Timecode")
+                strline &= FST("T0_to_Event_Timecode_ns")
+                strline &= FST("Trigger_ID")
+                strline &= FST("Validation_ID")
+                strline &= FST("Flags")
+                'strline = "ID;ASIC;EventCounter;RUN_EventTimeCodeLSB;RUN_EventTimecode_ns;T0_to_Event_Timecode;T0_to_Event_Timecode_ns;Trigger_ID;Validation_ID;Flags;"
+                For i = 0 To BI.channelsPerAsic - 1
+                    strline &= FST($"HIT_{i}")
+                Next
+                For i = 0 To BI.channelsPerAsic - 1
+                    strline &= FST($"CHARGE_LG_{i}")
+                Next
+                For i = 0 To BI.channelsPerAsic - 1
+                    strline &= FST($"CHARGE_HG_{i}", IIf(i = BI.channelsPerAsic - 1, True, False))
+                Next
+                'strline = strline.Remove(strline.Length - 1)
 
 
 
@@ -1400,50 +1442,40 @@ Public Class MainForm
         If CurrentProcessMode > ProcessMode.EVENT_DECODE Then
             If SaveFileType = FileType.CSV And EnableSaveFile = True Then
                 Dim strline = ""
-                Select Case GBL_ASIC_MODEL
-                    Case t_AsicModels.PETIROC
-                        strline = "ID_CLUSTER;CLUSTER_RUN_Timecode_ns;CLUSTER_Timecode_ns;NEventsInCluster;"
 
-                        For asi = 0 To BI.totalAsics - 1
-                            strline &= $"ASIC_{asi};EventCounter_{asi};RUN_EventTimeCodeLSB_{asi};RUN_EventTimecode_ns_{asi};T0_to_Event_Timecode_{asi};T0_to_Event_Timecode_ns_{asi};"
-                            For i = 0 To BI.channelsPerAsic - 1
-                                strline &= $"HIT_{asi}_{i};"
-                            Next
-                            For i = 0 To BI.channelsPerAsic - 1
-                                strline &= $"CHARGE_{asi}_{i};"
-                            Next
-                            For i = 0 To BI.channelsPerAsic - 1
-                                strline &= $"COARSE_{asi}_{i};"
-                            Next
-                            For i = 0 To BI.channelsPerAsic - 1
-                                strline &= $"FINE_{asi}_{i};"
-                            Next
-                            For i = 0 To BI.channelsPerAsic - 1
-                                strline &= $"RELATIVETIME_{asi}_{i};"
-                            Next
-                        Next
+                'strline = "ID_CLUSTER;CLUSTER_RUN_Timecode_ns;CLUSTER_Timecode_ns;NEventsInCluster;"
+                strline = ""
+                strline &= FST("ID_CLUSTER")
+                strline &= FST("CLUSTER_RUN_Timecode_ns")
+                strline &= FST("CLUSTER_Timecode_ns")
+                strline &= FST("NEventsInCluster")
 
-                        strline = strline.Remove(strline.Length - 1)
+                For asi = 0 To BI.totalAsics - 1
+                    strline &= FST($"ASIC_{asi}")
+                    strline &= FST($"EventCounter_{asi}")
+                    strline &= FST($"RUN_EventTimeCodeLSB_{asi}")
+                    strline &= FST($"RUN_EventTimecode_ns_{asi}")
+                    strline &= FST($"T0_to_Event_Timecode_{asi}")
+                    strline &= FST($"T0_to_Event_Timecode_ns_{asi}")
+                    strline &= FST($"Trigger_ID_{asi}")
+                    strline &= FST($"Validation_ID_{asi}")
+                    strline &= FST($"Flags_{asi}")
 
-                    Case t_AsicModels.CITIROC
-                        strline = "ID_CLUSTER;CLUSTER_RUN_Timecode_ns;CLUSTER_Timecode_ns;NEventsInCluster;"
 
-                        For asi = 0 To BI.totalAsics - 1
-                            strline &= $"ASIC_{asi};EventCounter_{asi};RUN_EventTimeCodeLSB_{asi};RUN_EventTimecode_ns_{asi};T0_to_Event_Timecode_{asi};T0_to_Event_Timecode_ns_{asi};"
-                            For i = 0 To BI.channelsPerAsic - 1
-                                strline &= $"HIT_{asi}_{i};"
-                            Next
-                            For i = 0 To BI.channelsPerAsic - 1
-                                strline &= $"CHARGE_LG_{asi}_{i};"
-                            Next
-                            For i = 0 To BI.channelsPerAsic - 1
-                                strline &= $"CHARGE_HG_{asi}_{i};"
-                            Next
+                    'strline &= $"ASIC_{asi};EventCounter_{asi};RUN_EventTimeCodeLSB_{asi};RUN_EventTimecode_ns_{asi};T0_to_Event_Timecode_{asi};T0_to_Event_Timecode_ns_{asi};Trigger_ID_{asi};Validation_ID_{asi};Flags_{asi};"
+                    For i = 0 To BI.channelsPerAsic - 1
+                        strline &= FST($"HIT_{asi}_{i}")
+                    Next
+                    For i = 0 To BI.channelsPerAsic - 1
+                        strline &= FST($"CHARGE_LG_{asi}_{i}")
+                    Next
+                    For i = 0 To BI.channelsPerAsic - 1
+                        strline &= FST($"CHARGE_HG_{asi}_{i}")
+                    Next
 
-                        Next
+                Next
 
-                        strline = strline.Remove(strline.Length - 1)
-                End Select
+                strline = strline.Remove(strline.Length - 1)
 
                 tx.WriteLine(strline)
 
@@ -1457,7 +1489,7 @@ Public Class MainForm
         ''THREAD ACQUISIZIONE HARDWARE
         Dim thread_acq As New Task(Sub()
                                        While running
-                                           board.GetRawBuffer(Buffer, TransferSize, 4000, BI.DigitalDataPacketSize, ValidWord)
+                                           board.GetRawBuffer(Buffer, TransferSize, 100, BI.DigitalDataPacketSize, ValidWord)
                                            'dim watch = System.Diagnostics.Stopwatch.StartNew()
                                            board.CitirocPushRawDataInBuffer(Buffer, ValidWord)
 
@@ -1547,10 +1579,28 @@ Public Class MainForm
                 watch.Stop()
 
 
+
+
+
                 If CurrentProcessMode = ProcessMode.EVENT_DECODE Then
 
                     While (DataDecodedCitiroc.Count > 0)
                         Dim e = DataDecodedCitiroc.Dequeue()
+
+
+                        sTriggerId = IIf(e.TriggerID > sTriggerId, e.TriggerID, sTriggerId)
+                        sValidationId = IIf(e.ValidationID > sValidationId, e.ValidationID, sValidationId)
+                        If e.Flags = 0 Or e.Flags = 1 Then
+                            sCntrValidated += 1
+                        End If
+                        If e.Flags = 2 Then
+                            sCntrNotValidated += 1
+                        End If
+                        If e.Flags = 3 Then
+                            sCntrNotFake += 1
+                        End If
+
+
                         TotalEvents += 1
 
 
@@ -1570,80 +1620,98 @@ Public Class MainForm
                             For i = 0 To e.hit.Count - 1
                                 hitNumber(i) = IIf(e.hit(i), 1, 0)
                             Next
-                            strline &= TotalEvents & ";" & e.AsicID & ";" & e.EventCounter & ";" & e.RunEventTimecode & ";" & e.RunEventTimecode_ns & ";" & e.EventTimecode & ";" & e.EventTimecode_ns & ";" & String.Join(";", hitNumber) & ";" & String.Join(";", e.chargeLG) & ";" & String.Join(";", e.chargeHG)
+                            strline &= FST(TotalEvents) &
+                                FST(e.AsicID) &
+                                FST(e.EventCounter) &
+                                FST(e.RunEventTimecode) &
+                                FST(e.RunEventTimecode_ns) &
+                                FST(e.EventTimecode) &
+                                FST(e.EventTimecode_ns) &
+                                FST(e.TriggerID) &
+                                FST(e.ValidationID) &
+                                FST(e.Flags) &
+                                FSTaU16(hitNumber) &
+                                FSTaU16(e.chargeLG) &
+                                FSTaU16(e.chargeHG, True)
                             tx.WriteLine(strline)
                             sByteCounter += strline.Length
                         End If
                         TotalEvents += 1
                         CurrentTimecode = e.RunEventTimecode_ns
+                        Dim good = True
+                        If e.Flags = 3 And ProcessFakeEvent = False Then
+                            good = False
+                        End If
 
-                        For t = 0 To MatrixInst.GetUpperBound(0)
-                            MatrixInst(t) = 0
-                        Next
+                        If good = True Then
+                            For t = 0 To MatrixInst.GetUpperBound(0)
+                                MatrixInst(t) = 0
+                            Next
 
-                        Dim EnergySum = 0
-                        Dim EnergySum_HG = 0
-                        Dim SpXIndx = BoardArrayOffset + (e.AsicID * BI.channelsPerAsic)
-                        For j = 0 To BI.channelsPerAsic - 1
-                            Dim c = SpXIndx + j
-                            If c < RawESpectrum.GetUpperBound(0) Then
-                                If e.chargeLG(j) > 0 Then
-                                    RawESpectrum(c, e.chargeLG(j)) += 1
-                                    EnergySum += e.chargeLG(j)
-                                    'RawESpectrum(SperctrumSumIndex, e.charge(j)) += 1
-                                End If
-
-                                If e.chargeHG(j) > 0 Then
-                                    RawE_HG_Spectrum(c, e.chargeHG(j)) += 1
-                                    EnergySum_HG += e.chargeHG(j)
-                                End If
-                                If MatrixHGMode = True Then
-                                    MatrixCumulative(c) += e.chargeHG(j)
-                                    MatrixInst(c) = e.chargeHG(j)
-                                Else
-                                    MatrixCumulative(c) += e.chargeLG(j)
-                                    MatrixInst(c) = e.chargeLG(j)
-                                End If
-
-                                MatrixCumulativePerAsic(e.AsicID, j) = MatrixCumulative(c)
-                                MatrixCumulativePerAsicCount(e.AsicID, j) += 1
-
-
-                                If e.hit(j) = True Then
-                                    Dim time As Double = 0
-                                    time = e.chargeLG(j) 'e.EventTimecode_ns + e.relative_time(j)
-                                    Dim deltaTime = time
-                                    deltaTime = (deltaTime * 1000) / (TimePsBin)
-                                    If deltaTime >= 0 And deltaTime < RawTSpectrum.GetUpperBound(1) Then
-                                        RawTSpectrum(c, deltaTime) += 1
+                            Dim EnergySum = 0
+                            Dim EnergySum_HG = 0
+                            Dim SpXIndx = BoardArrayOffset + (e.AsicID * BI.channelsPerAsic)
+                            For j = 0 To BI.channelsPerAsic - 1
+                                Dim c = SpXIndx + j
+                                If c < RawESpectrum.GetUpperBound(0) Then
+                                    If e.chargeLG(j) > 0 Then
+                                        RawESpectrum(c, e.chargeLG(j)) += 1
+                                        EnergySum += e.chargeLG(j)
+                                        'RawESpectrum(SperctrumSumIndex, e.charge(j)) += 1
                                     End If
-                                    RawHitCounter(0, c) += 1
+
+                                    If e.chargeHG(j) > 0 Then
+                                        RawE_HG_Spectrum(c, e.chargeHG(j)) += 1
+                                        EnergySum_HG += e.chargeHG(j)
+                                    End If
+                                    If MatrixHGMode = True Then
+                                        MatrixCumulative(c) += e.chargeHG(j)
+                                        MatrixInst(c) = e.chargeHG(j)
+                                    Else
+                                        MatrixCumulative(c) += e.chargeLG(j)
+                                        MatrixInst(c) = e.chargeLG(j)
+                                    End If
+
+                                    MatrixCumulativePerAsic(e.AsicID, j) = MatrixCumulative(c)
+                                    MatrixCumulativePerAsicCount(e.AsicID, j) += 1
+
+
+                                    If e.hit(j) = True Then
+                                        Dim time As Double = 0
+                                        time = e.chargeLG(j) 'e.EventTimecode_ns + e.relative_time(j)
+                                        Dim deltaTime = time
+                                        deltaTime = (deltaTime * 1000) / (TimePsBin)
+                                        If deltaTime >= 0 And deltaTime < RawTSpectrum.GetUpperBound(1) Then
+                                            RawTSpectrum(c, deltaTime) += 1
+                                        End If
+                                        RawHitCounter(0, c) += 1
+                                    End If
                                 End If
+                            Next
+
+
+                            Dim spesum_bin
+                            spesum_bin = Math.Round(Math.Min(EnergySum * SumSpectrumGain, 1023))
+                            If spesum_bin > 0 Then
+                                RawESpectrum(SperctrumSumIndex, spesum_bin) += 1
                             End If
-                        Next
+
+                            Dim spesum_bin_HG
+                            spesum_bin_HG = Math.Round(Math.Min(EnergySum_HG * SumSpectrumGain, 1023))
+                            If spesum_bin > 0 Then
+                                RawE_HG_Spectrum(SperctrumSumIndex, spesum_bin_HG) += 1
+                            End If
 
 
-                        Dim spesum_bin
-                        spesum_bin = Math.Round(Math.Min(EnergySum * SumSpectrumGain, 1023))
-                        If spesum_bin > 0 Then
-                            RawESpectrum(SperctrumSumIndex, spesum_bin) += 1
+
+                            pRT4.PostData(RawESpectrum, RawESpectrum.GetUpperBound(1))
+                            pRT4_HG.PostData(RawE_HG_Spectrum, RawE_HG_Spectrum.GetUpperBound(1))
+                            pRT5.PostData(RawTSpectrum, RawTSpectrum.GetUpperBound(1))
+                            pRT6.PostData(RawHitCounter, RawHitCounter.GetUpperBound(1))
+                            pRT7.PostData(AnalogMonitor, AnalogMonitor.GetUpperBound(1))
                         End If
-
-                        Dim spesum_bin_HG
-                        spesum_bin_HG = Math.Round(Math.Min(EnergySum_HG * SumSpectrumGain, 1023))
-                        If spesum_bin > 0 Then
-                            RawE_HG_Spectrum(SperctrumSumIndex, spesum_bin_HG) += 1
-                        End If
-
 
                         TotalEvents += DecodedEvents
-                        pRT4.PostData(RawESpectrum, RawESpectrum.GetUpperBound(1))
-                        pRT4_HG.PostData(RawE_HG_Spectrum, RawE_HG_Spectrum.GetUpperBound(1))
-                        pRT5.PostData(RawTSpectrum, RawTSpectrum.GetUpperBound(1))
-                        pRT6.PostData(RawHitCounter, RawHitCounter.GetUpperBound(1))
-
-                        pRT7.PostData(AnalogMonitor, AnalogMonitor.GetUpperBound(1))
-
                     End While
                 End If ' if EVENT DECODE
 
@@ -1687,8 +1755,9 @@ Public Class MainForm
 
                             If EnableSaveFile = True Then   'FILE SAVE
                                 If SaveFileType = FileType.CSV Then
-                                    strline = EventCounter & ";" & newCluster.Runtimecode_ns & ";" & newCluster.timecode_ns
-                                    strline &= ";" & newCluster.Events.Count
+                                    strline = ""
+                                    strline = FST(EventCounter) & FST(newCluster.Runtimecode_ns) & FST(newCluster.timecode_ns)
+                                    strline &= FST(newCluster.Events.Count, True)
                                 End If
                             End If
 
@@ -1697,6 +1766,18 @@ Public Class MainForm
                             newCluster.timecode_ns = newCluster.timecode * BI.FPGATimecode_ns
                             newCluster.Runtimecode_ns = newCluster.Runtimecode * BI.FPGATimecode_ns
                             For Each e In newCluster.Events
+                                sTriggerId = IIf(e.TriggerID > sTriggerId, e.TriggerID, sTriggerId)
+                                sValidationId = IIf(e.ValidationID > sValidationId, e.ValidationID, sValidationId)
+
+                                If e.Flags = 0 Or e.Flags = 1 Then
+                                    sCntrValidated += 1
+                                End If
+                                If e.Flags = 2 Then
+                                    sCntrNotValidated += 1
+                                End If
+                                If e.Flags = 3 Then
+                                    sCntrNotFake += 1
+                                End If
 
                                 For j = 0 To BI.channelsPerAsic - 1
                                     Dim vtemp As Double = (CType(e.chargeLG(j), Double) + CorrPoints(e.AsicID, j).Offset) * CorrPoints(e.AsicID, j).Gain
@@ -1719,7 +1800,19 @@ Public Class MainForm
                                         For i = 0 To e.hit.Count - 1
                                             hitNumber(i) = IIf(e.hit(i), 1, 0)
                                         Next
-                                        strline &= ";" & e.AsicID & ";" & e.EventCounter & ";" & e.RunEventTimecode & ";" & e.RunEventTimecode_ns & ";" & e.EventTimecode & ";" & e.EventTimecode_ns & ";" & String.Join(";", hitNumber) & ";" & String.Join(";", e.chargeLG) & ";" & String.Join(";", e.chargeHG)
+                                        strline &= FileSeparator &
+                                        FST(e.AsicID) &
+                                        FST(e.EventCounter) &
+                                        FST(e.RunEventTimecode) &
+                                        FST(e.RunEventTimecode_ns) &
+                                        FST(e.EventTimecode) &
+                                        FST(e.EventTimecode_ns) &
+                                        FST(e.TriggerID) &
+                                        FST(e.ValidationID) &
+                                        FST(e.Flags) &
+                                        FSTaU16(hitNumber) &
+                                        FSTaU16(e.chargeLG) &
+                                        FSTaU16(e.chargeHG, True)
                                     End If
                                 End If
                             Next
@@ -1762,9 +1855,11 @@ Public Class MainForm
                             Next
                         Next
                     End If
+                    Dim good_event = False
                     'For i = ClustersBefore To ClustersBefore + DecodedClusters - 1
                     For i = 0 To Clusters_Citiroc.Count - 1
                         Try
+
 
                             'For t = 0 To MatrixInst.GetUpperBound(0)
                             'MatrixInst(t) = 0
@@ -1773,37 +1868,46 @@ Public Class MainForm
                             Dim EnergySum_HG As Double = 0
                             For Each e In Clusters_Citiroc(i).Events
 
-                                Dim SpXIndx = BoardArrayOffset + (e.AsicID * BI.channelsPerAsic)
+                                Dim good = True
+                                If e.Flags = 3 And ProcessFakeEvent = False Then
+                                    good = False
+                                End If
 
-                                For j = 0 To BI.channelsPerAsic - 1
-                                    Dim c = SpXIndx + j
-                                    If c < RawESpectrum.GetUpperBound(0) Then
-                                        If e.chargeLG(j) > 0 Then
-                                            RawESpectrum(c, e.chargeLG(j)) += 1
-                                            EnergySum += e.chargeLG(j)
+                                If good = True Then
+
+                                    good_event = True
+
+                                    Dim SpXIndx = BoardArrayOffset + (e.AsicID * BI.channelsPerAsic)
+
+                                    For j = 0 To BI.channelsPerAsic - 1
+                                        Dim c = SpXIndx + j
+                                        If c < RawESpectrum.GetUpperBound(0) Then
+                                            If e.chargeLG(j) > 0 Then
+                                                RawESpectrum(c, e.chargeLG(j)) += 1
+                                                EnergySum += e.chargeLG(j)
+                                            End If
+
+                                            If e.chargeHG(j) > 0 Then
+                                                RawE_HG_Spectrum(c, e.chargeHG(j)) += 1
+                                                EnergySum_HG += e.chargeHG(j)
+                                            End If
+
+                                            If MatrixHGMode = True Then
+                                                MatrixCumulative(c) += e.chargeHG(j)
+                                            Else
+                                                MatrixCumulative(c) += e.chargeLG(j)
+                                            End If
+                                            MatrixCumulativePerAsic(e.AsicID, j) = MatrixCumulative(c)
+                                            MatrixCumulativePerAsicCount(e.AsicID, j) += 1
+                                            'MatrixInst(c) = e.chargeLG(j)
+                                            If e.hit(j) = True Then
+
+
+                                                RawHitCounter(0, c) += 1
+                                            End If
                                         End If
-
-                                        If e.chargeHG(j) > 0 Then
-                                            RawE_HG_Spectrum(c, e.chargeHG(j)) += 1
-                                            EnergySum_HG += e.chargeHG(j)
-                                        End If
-
-                                        If MatrixHGMode = True Then
-                                            MatrixCumulative(c) += e.chargeHG(j)
-                                        Else
-                                            MatrixCumulative(c) += e.chargeLG(j)
-                                        End If
-                                        MatrixCumulativePerAsic(e.AsicID, j) = MatrixCumulative(c)
-                                        MatrixCumulativePerAsicCount(e.AsicID, j) += 1
-                                        'MatrixInst(c) = e.chargeLG(j)
-                                        If e.hit(j) = True Then
-
-
-                                            RawHitCounter(0, c) += 1
-                                        End If
-                                    End If
-                                Next
-
+                                    Next
+                                End If
 
 
                             Next
@@ -1826,21 +1930,24 @@ Public Class MainForm
                     Next
                     TotalClusters += DecodedClusters
                     TotalEvents += DecodedEvents
-                    pRT4.PostData(RawESpectrum, RawESpectrum.GetUpperBound(1))
-                    pRT4_HG.PostData(RawE_HG_Spectrum, RawE_HG_Spectrum.GetUpperBound(1))
-                    pRT5.PostData(RawTSpectrum, RawTSpectrum.GetUpperBound(1))
-                    pRT6.PostData(RawHitCounter, RawHitCounter.GetUpperBound(1))
-                    If Clusters_Citiroc.Count > 0 Then
-                        For Each e In Clusters_Citiroc.Last.Events
-                            For j = 0 To e.chargeLG.GetUpperBound(0) - 1
-                                AnalogMonitor(e.AsicID, j) = e.chargeLG(j)
+
+                    If good_event = True Then
+                        pRT4.PostData(RawESpectrum, RawESpectrum.GetUpperBound(1))
+                        pRT4_HG.PostData(RawE_HG_Spectrum, RawE_HG_Spectrum.GetUpperBound(1))
+                        pRT5.PostData(RawTSpectrum, RawTSpectrum.GetUpperBound(1))
+                        pRT6.PostData(RawHitCounter, RawHitCounter.GetUpperBound(1))
+                        If Clusters_Citiroc.Count > 0 Then
+                            For Each e In Clusters_Citiroc.Last.Events
+                                For j = 0 To e.chargeLG.GetUpperBound(0) - 1
+                                    AnalogMonitor(e.AsicID, j) = e.chargeLG(j)
+                                Next
                             Next
-                        Next
+                        End If
+                        pRT7.PostData(AnalogMonitor, AnalogMonitor.GetUpperBound(1))
                     End If
-                    pRT7.PostData(AnalogMonitor, AnalogMonitor.GetUpperBound(1))
                 End If 'if CLUSTER_DECODE
 
-            End If
+                End If
 
 
             tProcTime = Now - ProcTime
@@ -2134,7 +2241,7 @@ Public Class MainForm
             DecodedClusters = 0
 
 
-            board.GetRawBuffer(Buffer, TransferSize, 4000, BI.DigitalDataPacketSize, ValidWord)
+            board.GetRawBuffer(Buffer, TransferSize, 5000, BI.DigitalDataPacketSize, ValidWord)
             If EnableSaveFile = True Then   'FILE SAVE
                 If SaveFileType = FileType.BINARY Then
                     For i = 0 To ValidWord - 1
@@ -3111,19 +3218,19 @@ Public Class MainForm
 
         Next
         If genable >= 0 Then
-                If genable = 1 Then
-                    hvon.Enabled = False
-                    hvoff.Enabled = True
+            If genable = 1 Then
+                hvon.Enabled = False
+                hvoff.Enabled = True
 
-                Else
-                    hvon.Enabled = True
-                    hvoff.Enabled = False
-
-                End If
+            Else
+                hvon.Enabled = True
+                hvoff.Enabled = False
 
             End If
 
-            Dim cps(1024) As UInt32
+        End If
+
+        Dim cps(1024) As UInt32
         If Not IsNothing(CPSMonitor) Then
             ' CPSMonitor.cps.Rows.Clear()
             For Each dt In DTList
@@ -3237,5 +3344,165 @@ Public Class MainForm
     Private Sub RunCounterMode_Click(sender As Object, e As EventArgs) Handles RunCounterMode.Click
         RunFreerunPC()
 
+    End Sub
+
+
+    Public Sub StartRunAutomatic(fname As String)
+
+        Dim g As New RunStart
+        If GBL_ASIC_MODEL = t_AsicModels.PETIROC Then
+            g.LockMode(0)
+        End If
+        g.Show()
+        g.ForcedFileName = fname
+        g.StartRun()
+        Select Case g.cTargetMode.SelectedIndex
+            Case 0
+                RUN_TARGET_MODE = TargetMode.FreeRunning
+
+            Case 1
+                RUN_TARGET_MODE = TargetMode.Events
+
+            Case 2
+                RUN_TARGET_MODE = TargetMode.Clusters
+
+            Case 3
+                RUN_TARGET_MODE = TargetMode.Time_ns
+        End Select
+        RUN_TARGET_VALUE = g.TargetValue
+        RunCompleted = False
+        EnableSaveFile = True
+        SaveFilePath = g.FilePathName
+
+        sStatus = "RUNNING"
+        If g.mode = 0 Then
+            StartRun()
+        Else
+            If g.mode = 1 Then
+                StartRunPC()
+            End If
+        End If
+
+
+    End Sub
+
+    Class TCPServerHERD
+        Public serverSocket As TcpListener
+        Public requestCount As Integer
+        Public clientSocket As TcpClient
+        Public DetectorNAme As String = ""
+        Dim mf As MainForm
+
+        Public Shared Function UnixTimeStampToDateTime(ByVal unixTimeStamp As Double) As DateTime
+            Dim dateTime As DateTime = New DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
+            dateTime = dateTime.AddSeconds(unixTimeStamp) '.ToLocalTime()
+            Return dateTime
+        End Function
+
+        Public Sub ServerThread()
+            serverSocket = New TcpListener(IPAddress.Any, My.Settings.ServerPort)
+            serverSocket.Start()
+            Dim cmd__header() As Byte = {&HFF, &H80, &H0, &H8}
+            Dim cmd__start() As Byte = {&HEE, &H0, &H0, &H1}
+            Dim cmd__stop() As Byte = {&HEE, &H0, &H0, &H0}
+
+            Dim risp_cmd__start() As Byte = {&HFF, &H80, &H0, &H8, &H0, &H0, &H0, &H0, &HEE, &H0, &H0, &H1, &H0, &H0, &H0, &H0}
+            Dim risp_cmd__stop() As Byte = {&HFF, &H80, &H0, &H8, &H0, &H0, &H0, &H0, &HEE, &H0, &H0, &H0, &H0, &H0, &H0, &H0}
+
+            DetectorNAme = My.Settings.DetectorName
+
+            requestCount = 0
+
+            While (True)
+                Try
+                    clientSocket = serverSocket.AcceptTcpClient()
+                    Dim ipend As Net.IPEndPoint = clientSocket.Client.RemoteEndPoint
+                    mf.AppendToLog(LogMode.mINFO, "Client connected: " + ipend.Address.ToString)
+                    Console.WriteLine("Client connected ")
+                    Dim networkStream As NetworkStream =
+                            clientSocket.GetStream()
+                    Dim bytesFrom(3) As Byte
+                    Dim bytesFrom_cmd(3) As Byte
+                    networkStream.Read(bytesFrom, 0, 4)
+
+
+                    If bytesFrom.SequenceEqual(cmd__header) Then
+                        networkStream.Read(bytesFrom, 0, 4)
+                        Dim runnumer As UInt32
+                        Dim trigtype As UInt32
+                        Dim unixtime As UInt32
+                        runnumer = bytesFrom(1) + (bytesFrom(0) << 8)
+                        trigtype = bytesFrom(3) + (bytesFrom(2) << 8)
+                        networkStream.Read(bytesFrom_cmd, 0, 4)
+                        networkStream.Read(bytesFrom, 0, 4)
+                        unixtime = Convert.ToInt32(bytesFrom(3)) + (Convert.ToInt32(bytesFrom(2)) << 8) + (Convert.ToInt32(bytesFrom(1)) << 16) + (Convert.ToInt32(bytesFrom(0)) << 24)
+                        Dim dd As DateTime = UnixTimeStampToDateTime(unixtime)
+                        Dim filename As String =
+                                DetectorNAme &
+                                runnumer.ToString.PadLeft(5, "0") & "_" &
+                                IIf(trigtype = 1, "BEAM", "CAL") & "_" &
+                                dd.Year & dd.Month.ToString.PadLeft(2, "0") & dd.Day.ToString.PadLeft(2, "0") & "_" &
+                                dd.Hour.ToString.PadLeft(2, "0") & dd.Minute.ToString.PadLeft(2, "0") & dd.Second.ToString.PadLeft(2, "0")
+
+                        If bytesFrom_cmd.SequenceEqual(cmd__start) Then
+                            Console.WriteLine("Start received... ")
+                            mf.Invoke(Sub() mf.StartRunAutomatic(filename))
+                            networkStream.Write(risp_cmd__start, 0, 16)
+                            mf.AppendToLog(LogMode.mINFO, "Starting run: " + filename)
+                        End If
+
+                        If bytesFrom_cmd.SequenceEqual(cmd__stop) Then
+                            Console.WriteLine("Stop received... ")
+                            mf.Invoke(Sub() mf.StopRun())
+                            networkStream.Write(risp_cmd__stop, 0, 16)
+                            mf.AppendToLog(LogMode.mINFO, "Run stopped")
+                        End If
+                    End If
+
+                    clientSocket.Close()
+                Catch ex As Exception
+                    MsgBox(ex.ToString)
+                End Try
+            End While
+
+
+
+            serverSocket.Stop()
+
+        End Sub
+        Public Sub StartServer(_this As MainForm)
+
+
+
+
+            If My.Settings.EnableServer = True Then
+                _this.AppendToLog(LogMode.mINFO, "Starting remote control server on port " + My.Settings.ServerPort.ToString)
+                _this.AppendToLog(LogMode.mINFO, "Run data will be stored in " + My.Settings.folderpos)
+                _this.AppendToLog(LogMode.mINFO, "Detector name is " + My.Settings.DetectorName)
+                mf = _this
+                Dim thread As New Thread(
+                  Sub()
+                      ServerThread()
+                  End Sub
+                )
+                thread.Start()
+
+            End If
+        End Sub
+
+
+    End Class
+
+    Private Sub MainForm_FormClosing(sender As Object, e As FormClosingEventArgs) Handles MyBase.FormClosing
+        For i = 0 To DTList.Count - 1
+            DTList(i).Disconnect()
+
+        Next
+        End
+    End Sub
+
+    Private Sub ServerConfigurationToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ServerConfigurationToolStripMenuItem.Click
+        Dim s As New ServerConfig()
+        s.ShowDialog()
     End Sub
 End Class

@@ -13,7 +13,7 @@ namespace DT5550W_P_lib
         POSITIVE = 0,
         NEGATIVE = 1
     }
-    public enum TriggerMode { TIME_TRIG, CHARGE_TRIG, EXT_TRIG, GBL_TRIG_TIME, GBL_TRIG_CHARGE, SELF_TRIG };
+    public enum TriggerMode { TIME_TRIG, CHARGE_TRIG, EXT_TRIG, GBL_TRIG_TIME, GBL_TRIG_CHARGE, SELF_TRIG, TWO_COINC_TIME, GBL_TWO_COINC_TIME };
 
     public enum T0Mode { SOFTWARE_STARTRUN = 0, SOFTWARE_PERIODIC = 1, EXTERNAL = 2 };
     public enum PCMode { PERIODIC_WIN = 0, EXTERNAL_WIN = 1, PERIODIC_WIN_EXT_START =2, PERIODIC_WIN_INT_START =3};
@@ -43,6 +43,9 @@ namespace DT5550W_P_lib
         public UInt64 RunEventTimecode;
         public UInt64 EventCounter;
         public UInt16 AsicID;
+        public UInt32 TriggerID;
+        public UInt32 ValidationID;
+        public UInt32 Flags;
 
         public double EventTimecode_ns;
         public double RunEventTimecode_ns;
@@ -97,7 +100,7 @@ namespace DT5550W_P_lib
 
     public class PHY_LINK
     {
-
+        bool connected = false;
         private Mutex mut = new Mutex();
 
         public enum USB_BUS_MODE
@@ -130,6 +133,11 @@ namespace DT5550W_P_lib
         [DllImport("niusb3_core.dll", CallingConvention = CallingConvention.Cdecl)]
         unsafe private static extern int NI_USB3_AllocHandle(
         ref IntPtr handle);
+
+        [DllImport("niusb3_core.dll", CallingConvention = CallingConvention.Cdecl)]
+        unsafe private static extern int NI_USB3_CloseConnection(
+        IntPtr handle);
+
 
         public PHY_LINK()
         {
@@ -237,6 +245,7 @@ namespace DT5550W_P_lib
                 ref UInt32 written_data)
         {
             //IntPtr unmanagedPointer = Marshal.AllocHGlobal((Int32) count);
+            if (!connected) return -100000;
             IntPtr written_data_ptr = new IntPtr(written_data);
             mut.WaitOne();
             int retcode = NI_USB3_WriteData(
@@ -263,8 +272,15 @@ namespace DT5550W_P_lib
                 ref UInt32 valid_data
                 )
         {
+            
             IntPtr read_data_ptr = new IntPtr(1);
             IntPtr valid_data_ptr = new IntPtr(1);
+            if (!connected)
+            {
+                read_data = 0;
+                valid_data = 0;
+                return -100000;
+            }
             mut.WaitOne();
             int retcode = NI_USB3_ReadData(
                     data,
@@ -286,6 +302,7 @@ namespace DT5550W_P_lib
         public int NI_USB3_WriteReg_M(UInt32 data,
                 UInt32 address)
         {
+            if (!connected) return -100000;
             mut.WaitOne();
             int res = NI_USB3_WriteReg(data, address, Handle);
             mut.ReleaseMutex();
@@ -295,6 +312,7 @@ namespace DT5550W_P_lib
         public int NI_USB3_ReadReg_M(ref UInt32 data,
           UInt32 address)
         {
+            if (!connected) return -100000;
             mut.WaitOne();
             int res = NI_USB3_ReadReg(ref data, address, Handle);
 
@@ -306,6 +324,7 @@ namespace DT5550W_P_lib
 
         unsafe public int IIC_WriteData(byte address, byte[] value, int len)
         {
+            if (!connected) return -100000;
             mut.WaitOne();
 
             if (NI_USB3_IIC_WriteData(
@@ -317,36 +336,7 @@ namespace DT5550W_P_lib
                 return -1;
 
             }
-            //int i;
 
-            //if (NI_USB3_WriteReg(0, RFA_IIC_BA + 0, ref Handle) != 0)
-            //    return -1;
-            //System.Threading.Thread.Sleep(5);
-            //if (NI_USB3_WriteReg(1 << 15, RFA_IIC_BA + 0, ref Handle) != 0)
-            //    return -1;
-            //System.Threading.Thread.Sleep(5);
-            //if (NI_USB3_WriteReg(0, RFA_IIC_BA + 0, ref Handle) != 0)
-            //    return -1;
-            //System.Threading.Thread.Sleep(5);
-            //if (NI_USB3_WriteReg(1 << 8, RFA_IIC_BA + 0, ref Handle) != 0)
-            //    return -1;
-            //System.Threading.Thread.Sleep(5);
-
-            //if (NI_USB3_WriteReg((UInt32)(address << 1) + (1 << 11), RFA_IIC_BA + 0, ref Handle) != 0)
-            //    return -1;
-            //System.Threading.Thread.Sleep(5);
-
-            //for (i = 0; i < len; i++)
-            //{
-            //    if (NI_USB3_WriteReg((UInt32)(value[i]) + (1 << 11), RFA_IIC_BA + 0, ref Handle) != 0)
-            //        return -1;
-            //    System.Threading.Thread.Sleep(5);
-            //}
-
-            //if (NI_USB3_WriteReg((1 << 9), RFA_IIC_BA + 0, ref Handle) != 0)
-            //    return -1;
-
-            //System.Threading.Thread.Sleep(5);
             mut.ReleaseMutex();
             return 0;
         }
@@ -380,11 +370,12 @@ namespace DT5550W_P_lib
 
         public int NI_USB3_ConnectDevice_M(String serial_number)
         {
-            
+            if (connected) return -100000;
             int ret =  NI_USB3_ConnectDevice(
                   serial_number,
                    Handle);
             uint data = 0;
+            if (ret == 0) connected = true;
             /*
             NI_USB3_WriteReg_M(30 * 10000, 0xFFFF0002);
             NI_USB3_WriteReg_M(0, 0xFFFF0000);
@@ -400,10 +391,20 @@ namespace DT5550W_P_lib
 
             return ret;
         }
+        public void NI_USB3_Disconnect_M()
+        {
+            if (!connected) return;
+
+            mut.WaitOne();
+            connected = false;
+            NI_USB3_CloseConnection(Handle);
+            mut.ReleaseMutex();
+        }
 
         public int NI_USB3_SetIICControllerBaseAddress_M(UInt32 ControlAddress,
             UInt32 StatusAddress)
         {
+            if (!connected) return -100000;
             return NI_USB3_SetIICControllerBaseAddress(
             ControlAddress,
             StatusAddress,
@@ -414,6 +415,7 @@ namespace DT5550W_P_lib
            bool Enable,
            float voltage)
         {
+            if (!connected) return -100000;
             mut.WaitOne();
             int res;
             res = NI_USB3_SetHV(
@@ -431,6 +433,7 @@ namespace DT5550W_P_lib
                  ref float current
                  )
         {
+            if (!connected) return -100000;
             mut.WaitOne();
             int res = NI_USB3_GetHV(
                 ref Enable,
@@ -447,6 +450,7 @@ namespace DT5550W_P_lib
                int address,
                ref float temperature)
         {
+            if (!connected) return -100000;
             mut.WaitOne();
             int res = NI_USB3_GetDT5550WTempSens(
                 address,
@@ -461,6 +465,7 @@ namespace DT5550W_P_lib
                 ref int asic_count,
                 ref int SN)
         {
+            if (!connected) return -100000;
             mut.WaitOne();
             int res = NI_USB3_GetDT5550_DGBoardInfo(
                  model,

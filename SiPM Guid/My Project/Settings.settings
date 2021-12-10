@@ -89,5 +89,14 @@
     <Setting Name="IP_SN" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
+    <Setting Name="EnableServer" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="ServerPort" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">1000</Value>
+    </Setting>
+    <Setting Name="DetectorName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">DET</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

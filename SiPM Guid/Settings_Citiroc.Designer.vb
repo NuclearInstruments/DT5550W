@@ -46,6 +46,7 @@ Partial Class Settings_Citiroc
         Me.ScaBias = New System.Windows.Forms.ComboBox()
         Me.Label1 = New System.Windows.Forms.Label()
         Me.TabPage4 = New System.Windows.Forms.TabPage()
+        Me.InternalTriggerPath = New System.Windows.Forms.CheckBox()
         Me.LabelHoldNs = New System.Windows.Forms.Label()
         Me.HoldDelay = New System.Windows.Forms.NumericUpDown()
         Me.Label31 = New System.Windows.Forms.Label()
@@ -85,6 +86,17 @@ Partial Class Settings_Citiroc
         Me.Label16 = New System.Windows.Forms.Label()
         Me.HVon = New System.Windows.Forms.CheckBox()
         Me.TabPage7 = New System.Windows.Forms.TabPage()
+        Me.FileFixedSizeV = New System.Windows.Forms.NumericUpDown()
+        Me.FileFixedSizeB = New System.Windows.Forms.CheckBox()
+        Me.Label41 = New System.Windows.Forms.Label()
+        Me.FileSeparator = New System.Windows.Forms.ComboBox()
+        Me.GroupBox3 = New System.Windows.Forms.GroupBox()
+        Me.processFake = New System.Windows.Forms.CheckBox()
+        Me.Label40 = New System.Windows.Forms.Label()
+        Me.bValidateWin = New System.Windows.Forms.NumericUpDown()
+        Me.bValidateFake = New System.Windows.Forms.CheckBox()
+        Me.bValidateDiscard = New System.Windows.Forms.CheckBox()
+        Me.bValidateEnable = New System.Windows.Forms.CheckBox()
         Me.ImgPath = New System.Windows.Forms.ComboBox()
         Me.Label39 = New System.Windows.Forms.Label()
         Me.speBin = New System.Windows.Forms.ComboBox()
@@ -128,7 +140,13 @@ Partial Class Settings_Citiroc
         Me.TabControl1 = New System.Windows.Forms.TabControl()
         Me.TabPage1 = New System.Windows.Forms.TabPage()
         Me.TabPage2 = New System.Windows.Forms.TabPage()
-        Me.InternalTriggerPath = New System.Windows.Forms.CheckBox()
+        Me.TrMonoWidth = New System.Windows.Forms.NumericUpDown()
+        Me.TrmonoEn = New System.Windows.Forms.CheckBox()
+        Me.Label43 = New System.Windows.Forms.Label()
+        Me.Label44 = New System.Windows.Forms.Label()
+        Me.GroupBox4 = New System.Windows.Forms.GroupBox()
+        Me.BackgroundWorker1 = New System.ComponentModel.BackgroundWorker()
+        Me.cbValidationMode = New System.Windows.Forms.ComboBox()
         Me.TableLayoutPanel1.SuspendLayout()
         Me.Panel1.SuspendLayout()
         Me.Panel5.SuspendLayout()
@@ -150,6 +168,9 @@ Partial Class Settings_Citiroc
         CType(Me.Voltage, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.tempConmpCoef, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.TabPage7.SuspendLayout()
+        CType(Me.FileFixedSizeV, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.GroupBox3.SuspendLayout()
+        CType(Me.bValidateWin, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.SumSpectrumGain, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.aClusterTime, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.TabPage8.SuspendLayout()
@@ -161,6 +182,8 @@ Partial Class Settings_Citiroc
         CType(Me.pc_WW, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.Panel3.SuspendLayout()
         Me.TabControl1.SuspendLayout()
+        CType(Me.TrMonoWidth, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.GroupBox4.SuspendLayout()
         Me.SuspendLayout()
         '
         'TableLayoutPanel1
@@ -258,7 +281,7 @@ Partial Class Settings_Citiroc
         Me.TabPage3.Controls.Add(Me.Label1)
         Me.TabPage3.Location = New System.Drawing.Point(4, 22)
         Me.TabPage3.Name = "TabPage3"
-        Me.TabPage3.Padding = New System.Windows.Forms.Padding(3, 3, 3, 3)
+        Me.TabPage3.Padding = New System.Windows.Forms.Padding(3)
         Me.TabPage3.Size = New System.Drawing.Size(803, 248)
         Me.TabPage3.TabIndex = 0
         Me.TabPage3.Text = "Asic General"
@@ -410,6 +433,7 @@ Partial Class Settings_Citiroc
         '
         'TabPage4
         '
+        Me.TabPage4.Controls.Add(Me.GroupBox4)
         Me.TabPage4.Controls.Add(Me.InternalTriggerPath)
         Me.TabPage4.Controls.Add(Me.LabelHoldNs)
         Me.TabPage4.Controls.Add(Me.HoldDelay)
@@ -429,11 +453,21 @@ Partial Class Settings_Citiroc
         Me.TabPage4.Controls.Add(Me.Label19)
         Me.TabPage4.Location = New System.Drawing.Point(4, 22)
         Me.TabPage4.Name = "TabPage4"
-        Me.TabPage4.Padding = New System.Windows.Forms.Padding(3, 3, 3, 3)
+        Me.TabPage4.Padding = New System.Windows.Forms.Padding(3)
         Me.TabPage4.Size = New System.Drawing.Size(803, 248)
         Me.TabPage4.TabIndex = 1
         Me.TabPage4.Text = "Trigger"
         Me.TabPage4.UseVisualStyleBackColor = True
+        '
+        'InternalTriggerPath
+        '
+        Me.InternalTriggerPath.AutoSize = True
+        Me.InternalTriggerPath.Location = New System.Drawing.Point(422, 22)
+        Me.InternalTriggerPath.Name = "InternalTriggerPath"
+        Me.InternalTriggerPath.Size = New System.Drawing.Size(169, 17)
+        Me.InternalTriggerPath.TabIndex = 84
+        Me.InternalTriggerPath.Text = "Use Direct internal trigger path"
+        Me.InternalTriggerPath.UseVisualStyleBackColor = True
         '
         'LabelHoldNs
         '
@@ -651,8 +685,8 @@ Partial Class Settings_Citiroc
         Me.TabPage5.Controls.Add(Me.Label9)
         Me.TabPage5.Location = New System.Drawing.Point(4, 22)
         Me.TabPage5.Name = "TabPage5"
-        Me.TabPage5.Padding = New System.Windows.Forms.Padding(3, 3, 3, 3)
-        Me.TabPage5.Size = New System.Drawing.Size(804, 252)
+        Me.TabPage5.Padding = New System.Windows.Forms.Padding(3)
+        Me.TabPage5.Size = New System.Drawing.Size(803, 248)
         Me.TabPage5.TabIndex = 2
         Me.TabPage5.Text = "Timestamp"
         Me.TabPage5.UseVisualStyleBackColor = True
@@ -708,7 +742,7 @@ Partial Class Settings_Citiroc
         Me.TabPage6.Controls.Add(Me.HVon)
         Me.TabPage6.Location = New System.Drawing.Point(4, 22)
         Me.TabPage6.Name = "TabPage6"
-        Me.TabPage6.Padding = New System.Windows.Forms.Padding(3, 3, 3, 3)
+        Me.TabPage6.Padding = New System.Windows.Forms.Padding(3)
         Me.TabPage6.Size = New System.Drawing.Size(803, 248)
         Me.TabPage6.TabIndex = 3
         Me.TabPage6.Text = "HV"
@@ -825,6 +859,11 @@ Partial Class Settings_Citiroc
         '
         'TabPage7
         '
+        Me.TabPage7.Controls.Add(Me.FileFixedSizeV)
+        Me.TabPage7.Controls.Add(Me.FileFixedSizeB)
+        Me.TabPage7.Controls.Add(Me.Label41)
+        Me.TabPage7.Controls.Add(Me.FileSeparator)
+        Me.TabPage7.Controls.Add(Me.GroupBox3)
         Me.TabPage7.Controls.Add(Me.ImgPath)
         Me.TabPage7.Controls.Add(Me.Label39)
         Me.TabPage7.Controls.Add(Me.speBin)
@@ -843,11 +882,123 @@ Partial Class Settings_Citiroc
         Me.TabPage7.Controls.Add(Me.Label13)
         Me.TabPage7.Location = New System.Drawing.Point(4, 22)
         Me.TabPage7.Name = "TabPage7"
-        Me.TabPage7.Padding = New System.Windows.Forms.Padding(3, 3, 3, 3)
+        Me.TabPage7.Padding = New System.Windows.Forms.Padding(3)
         Me.TabPage7.Size = New System.Drawing.Size(803, 248)
         Me.TabPage7.TabIndex = 4
         Me.TabPage7.Text = "Data Processing"
         Me.TabPage7.UseVisualStyleBackColor = True
+        '
+        'FileFixedSizeV
+        '
+        Me.FileFixedSizeV.Location = New System.Drawing.Point(116, 161)
+        Me.FileFixedSizeV.Name = "FileFixedSizeV"
+        Me.FileFixedSizeV.Size = New System.Drawing.Size(103, 20)
+        Me.FileFixedSizeV.TabIndex = 83
+        Me.FileFixedSizeV.Value = New Decimal(New Integer() {20, 0, 0, 0})
+        '
+        'FileFixedSizeB
+        '
+        Me.FileFixedSizeB.AutoSize = True
+        Me.FileFixedSizeB.Location = New System.Drawing.Point(14, 162)
+        Me.FileFixedSizeB.Name = "FileFixedSizeB"
+        Me.FileFixedSizeB.Size = New System.Drawing.Size(102, 17)
+        Me.FileFixedSizeB.TabIndex = 82
+        Me.FileFixedSizeB.Text = "Fixed-size Fields"
+        Me.FileFixedSizeB.UseVisualStyleBackColor = True
+        '
+        'Label41
+        '
+        Me.Label41.Location = New System.Drawing.Point(11, 129)
+        Me.Label41.Name = "Label41"
+        Me.Label41.Size = New System.Drawing.Size(73, 13)
+        Me.Label41.TabIndex = 81
+        Me.Label41.Text = "Separator"
+        '
+        'FileSeparator
+        '
+        Me.FileSeparator.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+        Me.FileSeparator.FormattingEnabled = True
+        Me.FileSeparator.Location = New System.Drawing.Point(117, 126)
+        Me.FileSeparator.Name = "FileSeparator"
+        Me.FileSeparator.Size = New System.Drawing.Size(103, 21)
+        Me.FileSeparator.TabIndex = 80
+        '
+        'GroupBox3
+        '
+        Me.GroupBox3.Controls.Add(Me.cbValidationMode)
+        Me.GroupBox3.Controls.Add(Me.processFake)
+        Me.GroupBox3.Controls.Add(Me.Label40)
+        Me.GroupBox3.Controls.Add(Me.bValidateWin)
+        Me.GroupBox3.Controls.Add(Me.bValidateFake)
+        Me.GroupBox3.Controls.Add(Me.bValidateDiscard)
+        Me.GroupBox3.Controls.Add(Me.bValidateEnable)
+        Me.GroupBox3.Location = New System.Drawing.Point(542, 83)
+        Me.GroupBox3.Name = "GroupBox3"
+        Me.GroupBox3.Size = New System.Drawing.Size(237, 151)
+        Me.GroupBox3.TabIndex = 79
+        Me.GroupBox3.TabStop = False
+        Me.GroupBox3.Text = "Validation (LEMO 5)"
+        '
+        'processFake
+        '
+        Me.processFake.AutoSize = True
+        Me.processFake.Location = New System.Drawing.Point(5, 121)
+        Me.processFake.Name = "processFake"
+        Me.processFake.Size = New System.Drawing.Size(184, 17)
+        Me.processFake.TabIndex = 82
+        Me.processFake.Text = "Process fake events in LIVE data"
+        Me.processFake.UseVisualStyleBackColor = True
+        '
+        'Label40
+        '
+        Me.Label40.AutoSize = True
+        Me.Label40.Location = New System.Drawing.Point(6, 51)
+        Me.Label40.Name = "Label40"
+        Me.Label40.Size = New System.Drawing.Size(115, 13)
+        Me.Label40.TabIndex = 81
+        Me.Label40.Text = "Validation Window (ns)"
+        '
+        'bValidateWin
+        '
+        Me.bValidateWin.DecimalPlaces = 2
+        Me.bValidateWin.Increment = New Decimal(New Integer() {825, 0, 0, 131072})
+        Me.bValidateWin.Location = New System.Drawing.Point(137, 49)
+        Me.bValidateWin.Maximum = New Decimal(New Integer() {100000, 0, 0, 0})
+        Me.bValidateWin.Minimum = New Decimal(New Integer() {825, 0, 0, 131072})
+        Me.bValidateWin.Name = "bValidateWin"
+        Me.bValidateWin.Size = New System.Drawing.Size(89, 20)
+        Me.bValidateWin.TabIndex = 80
+        Me.bValidateWin.Value = New Decimal(New Integer() {300, 0, 0, 0})
+        '
+        'bValidateFake
+        '
+        Me.bValidateFake.AutoSize = True
+        Me.bValidateFake.Location = New System.Drawing.Point(5, 98)
+        Me.bValidateFake.Name = "bValidateFake"
+        Me.bValidateFake.Size = New System.Drawing.Size(232, 17)
+        Me.bValidateFake.TabIndex = 79
+        Me.bValidateFake.Text = "Generate FAKE on validation without trigger"
+        Me.bValidateFake.UseVisualStyleBackColor = True
+        '
+        'bValidateDiscard
+        '
+        Me.bValidateDiscard.AutoSize = True
+        Me.bValidateDiscard.Location = New System.Drawing.Point(5, 75)
+        Me.bValidateDiscard.Name = "bValidateDiscard"
+        Me.bValidateDiscard.Size = New System.Drawing.Size(159, 17)
+        Me.bValidateDiscard.TabIndex = 78
+        Me.bValidateDiscard.Text = "Discard non validated event"
+        Me.bValidateDiscard.UseVisualStyleBackColor = True
+        '
+        'bValidateEnable
+        '
+        Me.bValidateEnable.AutoSize = True
+        Me.bValidateEnable.Location = New System.Drawing.Point(6, 24)
+        Me.bValidateEnable.Name = "bValidateEnable"
+        Me.bValidateEnable.Size = New System.Drawing.Size(59, 17)
+        Me.bValidateEnable.TabIndex = 77
+        Me.bValidateEnable.Text = "Enable"
+        Me.bValidateEnable.UseVisualStyleBackColor = True
         '
         'ImgPath
         '
@@ -905,18 +1056,18 @@ Partial Class Settings_Citiroc
         '
         'Button2
         '
-        Me.Button2.Location = New System.Drawing.Point(14, 188)
+        Me.Button2.Location = New System.Drawing.Point(276, 188)
         Me.Button2.Name = "Button2"
-        Me.Button2.Size = New System.Drawing.Size(320, 46)
+        Me.Button2.Size = New System.Drawing.Size(251, 46)
         Me.Button2.TabIndex = 70
         Me.Button2.Text = "USE ACQUISITION RESULT TO SET UNIFORMITY GAIN"
         Me.Button2.UseVisualStyleBackColor = True
         '
         'Button1
         '
-        Me.Button1.Location = New System.Drawing.Point(14, 136)
+        Me.Button1.Location = New System.Drawing.Point(14, 188)
         Me.Button1.Name = "Button1"
-        Me.Button1.Size = New System.Drawing.Size(320, 46)
+        Me.Button1.Size = New System.Drawing.Size(257, 46)
         Me.Button1.TabIndex = 69
         Me.Button1.Text = "USE ACQUISITION RESULT TO SET PEDESTAL"
         Me.Button1.UseVisualStyleBackColor = True
@@ -1005,8 +1156,8 @@ Partial Class Settings_Citiroc
         Me.TabPage8.Controls.Add(Me.Label11)
         Me.TabPage8.Location = New System.Drawing.Point(4, 22)
         Me.TabPage8.Name = "TabPage8"
-        Me.TabPage8.Padding = New System.Windows.Forms.Padding(3, 3, 3, 3)
-        Me.TabPage8.Size = New System.Drawing.Size(804, 252)
+        Me.TabPage8.Padding = New System.Windows.Forms.Padding(3)
+        Me.TabPage8.Size = New System.Drawing.Size(803, 248)
         Me.TabPage8.TabIndex = 5
         Me.TabPage8.Text = "Monitor"
         Me.TabPage8.UseVisualStyleBackColor = True
@@ -1100,8 +1251,8 @@ Partial Class Settings_Citiroc
         Me.TabPage9.Controls.Add(Me.Label33)
         Me.TabPage9.Location = New System.Drawing.Point(4, 22)
         Me.TabPage9.Name = "TabPage9"
-        Me.TabPage9.Padding = New System.Windows.Forms.Padding(3, 3, 3, 3)
-        Me.TabPage9.Size = New System.Drawing.Size(804, 252)
+        Me.TabPage9.Padding = New System.Windows.Forms.Padding(3)
+        Me.TabPage9.Size = New System.Drawing.Size(803, 248)
         Me.TabPage9.TabIndex = 6
         Me.TabPage9.Text = "Photon Counting"
         Me.TabPage9.UseVisualStyleBackColor = True
@@ -1238,7 +1389,7 @@ Partial Class Settings_Citiroc
         '
         Me.TabPage1.Location = New System.Drawing.Point(4, 22)
         Me.TabPage1.Name = "TabPage1"
-        Me.TabPage1.Padding = New System.Windows.Forms.Padding(3, 3, 3, 3)
+        Me.TabPage1.Padding = New System.Windows.Forms.Padding(3)
         Me.TabPage1.Size = New System.Drawing.Size(809, 320)
         Me.TabPage1.TabIndex = 0
         Me.TabPage1.Text = "TabPage1"
@@ -1248,21 +1399,71 @@ Partial Class Settings_Citiroc
         '
         Me.TabPage2.Location = New System.Drawing.Point(4, 22)
         Me.TabPage2.Name = "TabPage2"
-        Me.TabPage2.Padding = New System.Windows.Forms.Padding(3, 3, 3, 3)
+        Me.TabPage2.Padding = New System.Windows.Forms.Padding(3)
         Me.TabPage2.Size = New System.Drawing.Size(809, 320)
         Me.TabPage2.TabIndex = 1
         Me.TabPage2.Text = "TabPage2"
         Me.TabPage2.UseVisualStyleBackColor = True
         '
-        'InternalTriggerPath
+        'TrMonoWidth
         '
-        Me.InternalTriggerPath.AutoSize = True
-        Me.InternalTriggerPath.Location = New System.Drawing.Point(422, 22)
-        Me.InternalTriggerPath.Name = "InternalTriggerPath"
-        Me.InternalTriggerPath.Size = New System.Drawing.Size(169, 17)
-        Me.InternalTriggerPath.TabIndex = 84
-        Me.InternalTriggerPath.Text = "Use Direct internal trigger path"
-        Me.InternalTriggerPath.UseVisualStyleBackColor = True
+        Me.TrMonoWidth.BackColor = System.Drawing.Color.White
+        Me.TrMonoWidth.Increment = New Decimal(New Integer() {8, 0, 0, 0})
+        Me.TrMonoWidth.Location = New System.Drawing.Point(132, 46)
+        Me.TrMonoWidth.Maximum = New Decimal(New Integer() {500000, 0, 0, 0})
+        Me.TrMonoWidth.Minimum = New Decimal(New Integer() {8, 0, 0, 0})
+        Me.TrMonoWidth.Name = "TrMonoWidth"
+        Me.TrMonoWidth.Size = New System.Drawing.Size(80, 20)
+        Me.TrMonoWidth.TabIndex = 85
+        Me.TrMonoWidth.Value = New Decimal(New Integer() {64, 0, 0, 0})
+        '
+        'TrmonoEn
+        '
+        Me.TrmonoEn.AutoSize = True
+        Me.TrmonoEn.Location = New System.Drawing.Point(16, 23)
+        Me.TrmonoEn.Name = "TrmonoEn"
+        Me.TrmonoEn.Size = New System.Drawing.Size(196, 17)
+        Me.TrmonoEn.TabIndex = 86
+        Me.TrmonoEn.Text = "Enable monostable on trigger outout"
+        Me.TrmonoEn.UseVisualStyleBackColor = True
+        '
+        'Label43
+        '
+        Me.Label43.Location = New System.Drawing.Point(13, 48)
+        Me.Label43.Name = "Label43"
+        Me.Label43.Size = New System.Drawing.Size(113, 18)
+        Me.Label43.TabIndex = 87
+        Me.Label43.Text = "Trigger Out min pulse width"
+        '
+        'Label44
+        '
+        Me.Label44.Location = New System.Drawing.Point(228, 48)
+        Me.Label44.Name = "Label44"
+        Me.Label44.Size = New System.Drawing.Size(99, 18)
+        Me.Label44.TabIndex = 88
+        Me.Label44.Text = "ns"
+        '
+        'GroupBox4
+        '
+        Me.GroupBox4.Controls.Add(Me.TrMonoWidth)
+        Me.GroupBox4.Controls.Add(Me.TrmonoEn)
+        Me.GroupBox4.Controls.Add(Me.Label44)
+        Me.GroupBox4.Controls.Add(Me.Label43)
+        Me.GroupBox4.Location = New System.Drawing.Point(306, 146)
+        Me.GroupBox4.Name = "GroupBox4"
+        Me.GroupBox4.Size = New System.Drawing.Size(293, 76)
+        Me.GroupBox4.TabIndex = 89
+        Me.GroupBox4.TabStop = False
+        Me.GroupBox4.Text = "Trigger Output - LEMO 2"
+        '
+        'cbValidationMode
+        '
+        Me.cbValidationMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+        Me.cbValidationMode.FormattingEnabled = True
+        Me.cbValidationMode.Location = New System.Drawing.Point(137, 19)
+        Me.cbValidationMode.Name = "cbValidationMode"
+        Me.cbValidationMode.Size = New System.Drawing.Size(89, 21)
+        Me.cbValidationMode.TabIndex = 83
         '
         'Settings_Citiroc
         '
@@ -1296,6 +1497,11 @@ Partial Class Settings_Citiroc
         CType(Me.Voltage, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.tempConmpCoef, System.ComponentModel.ISupportInitialize).EndInit()
         Me.TabPage7.ResumeLayout(False)
+        Me.TabPage7.PerformLayout()
+        CType(Me.FileFixedSizeV, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.GroupBox3.ResumeLayout(False)
+        Me.GroupBox3.PerformLayout()
+        CType(Me.bValidateWin, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.SumSpectrumGain, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.aClusterTime, System.ComponentModel.ISupportInitialize).EndInit()
         Me.TabPage8.ResumeLayout(False)
@@ -1307,6 +1513,9 @@ Partial Class Settings_Citiroc
         CType(Me.pc_WW, System.ComponentModel.ISupportInitialize).EndInit()
         Me.Panel3.ResumeLayout(False)
         Me.TabControl1.ResumeLayout(False)
+        CType(Me.TrMonoWidth, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.GroupBox4.ResumeLayout(False)
+        Me.GroupBox4.PerformLayout()
         Me.ResumeLayout(False)
 
     End Sub
@@ -1418,4 +1627,22 @@ Partial Class Settings_Citiroc
     Friend WithEvents ImgPath As ComboBox
     Friend WithEvents Label39 As Label
     Friend WithEvents InternalTriggerPath As CheckBox
+    Friend WithEvents GroupBox3 As GroupBox
+    Friend WithEvents Label40 As Label
+    Friend WithEvents bValidateWin As NumericUpDown
+    Friend WithEvents bValidateFake As CheckBox
+    Friend WithEvents bValidateDiscard As CheckBox
+    Friend WithEvents bValidateEnable As CheckBox
+    Friend WithEvents Label41 As Label
+    Friend WithEvents FileSeparator As ComboBox
+    Friend WithEvents FileFixedSizeV As NumericUpDown
+    Friend WithEvents FileFixedSizeB As CheckBox
+    Friend WithEvents processFake As CheckBox
+    Friend WithEvents GroupBox4 As GroupBox
+    Friend WithEvents TrMonoWidth As NumericUpDown
+    Friend WithEvents TrmonoEn As CheckBox
+    Friend WithEvents Label44 As Label
+    Friend WithEvents Label43 As Label
+    Friend WithEvents BackgroundWorker1 As System.ComponentModel.BackgroundWorker
+    Friend WithEvents cbValidationMode As ComboBox
 End Class

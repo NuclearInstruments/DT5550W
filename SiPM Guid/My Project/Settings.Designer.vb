@@ -400,6 +400,42 @@ Namespace My
                 Me("IP_SN") = value
             End Set
         End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("False")>  _
+        Public Property EnableServer() As Boolean
+            Get
+                Return CType(Me("EnableServer"),Boolean)
+            End Get
+            Set
+                Me("EnableServer") = value
+            End Set
+        End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("1000")>  _
+        Public Property ServerPort() As Integer
+            Get
+                Return CType(Me("ServerPort"),Integer)
+            End Get
+            Set
+                Me("ServerPort") = value
+            End Set
+        End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("DET")>  _
+        Public Property DetectorName() As String
+            Get
+                Return CType(Me("DetectorName"),String)
+            End Get
+            Set
+                Me("DetectorName") = value
+            End Set
+        End Property
     End Class
 End Namespace
 

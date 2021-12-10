@@ -28,6 +28,12 @@ namespace DT5550W_P_lib
         const UInt32 SCI_REG_EXT_DELAY = 0x0000000D;
         const UInt32 SCI_REG_SW_TRIG_FREQ = 0x0000000E;
         const UInt32 SCI_REG_HOLD_WIN = 0x0000000F;
+        const UInt32 SCI_REG_VALIDATION = 0x00000016;
+        const UInt32 SCI_REG_TMASK_A = 0x00000017;
+        const UInt32 SCI_REG_TMASK_B = 0x00000018;
+        const UInt32 SCI_REG_TMASK_C = 0x00000019;
+        const UInt32 SCI_REG_TMASK_D = 0x0000001A;
+        const UInt32 SCI_REG_TRG_OUT_MONOSTABLE = 0x0000001B;
         const UInt32 SCI_REG_A_RATE = 0x00020007;
         const UInt32 SCI_REG_B_RATE = 0x00020008;
         const UInt32 SCI_REG_C_RATE = 0x00020009;
@@ -531,7 +537,10 @@ const UInt32 SCI_REG_CitirocCfg1_REG_CFG0 = 0x100009;
                 return false;
         }
 
-
+        public void Disconnect ()
+        {
+            phy.NI_USB3_Disconnect_M();
+        }
         public int SetHV(bool Enable, float voltage, float compliance)
         {
             voltage = voltage > compliance ? compliance : voltage;
@@ -541,6 +550,26 @@ const UInt32 SCI_REG_CitirocCfg1_REG_CFG0 = 0x100009;
 
 
             return 0;
+        }
+
+        public int SetTrigOUTMonostable(UInt32 time)
+        {
+            UInt32 v=0;
+            if (time > 0)
+            {
+                v = 0x80000000;
+                v += (time / 8) - 1;
+            }
+            return phy.NI_USB3_WriteReg_M(v, SCI_REG_TRG_OUT_MONOSTABLE);
+        }
+
+        
+        public int SetFGPATriggerMask(UInt32 mask_A, UInt32 mask_B, UInt32 mask_C, UInt32 mask_D)
+        {
+            phy.NI_USB3_WriteReg_M(mask_A, SCI_REG_TMASK_A);
+            phy.NI_USB3_WriteReg_M(mask_B, SCI_REG_TMASK_B);
+            phy.NI_USB3_WriteReg_M(mask_C, SCI_REG_TMASK_C);
+            return  phy.NI_USB3_WriteReg_M(mask_D, SCI_REG_TMASK_D);
         }
 
         public int SetHVTempFB(bool Enable, float voltage, float compliance, float tempCof, float temp)
@@ -622,6 +651,17 @@ const UInt32 SCI_REG_CitirocCfg1_REG_CFG0 = 0x100009;
             return true;
         }
 
+        public void EnableValidation(bool validation, bool discard, bool fakeevent, double timeout, UInt32 mode)
+        {
+            uint vreg = validation ? 1U : 0U;
+            vreg += discard ? 2U : 0U;
+            vreg += fakeevent ? 4U : 0U;
+
+            vreg += (((uint)(timeout/8.25) & 0xFFFF) << 16);
+            vreg += (mode & 0x3) << 4;
+            phy.NI_USB3_WriteReg_M(vreg, SCI_REG_VALIDATION);
+
+        }
 
         public void SelectTriggerMode(TriggerMode TGMode)
         {
@@ -655,7 +695,14 @@ const UInt32 SCI_REG_CitirocCfg1_REG_CFG0 = 0x100009;
                     trig_mode = 4;
                     break;
 
-              
+                case TriggerMode.TWO_COINC_TIME :
+                    trig_mode = 5;
+                    break;
+                case TriggerMode.GBL_TWO_COINC_TIME :
+                    trig_mode = 6;
+                    break;
+
+
             }
           //  phy.NI_USB3_WriteReg_M(0, SCI_REG_TRIG_A_SEL);
             phy.NI_USB3_WriteReg_M(trig_mode, SCI_REG_TRIG_A_SEL);
@@ -833,6 +880,7 @@ const UInt32 SCI_REG_CitirocCfg1_REG_CFG0 = 0x100009;
             phy.NI_USB3_WriteReg_M(0, SCI_REG_RUNSTART);
             System.Threading.Thread.Sleep(1);
             phy.NI_USB3_WriteReg_M(1, SCI_REG_RUNSTART);
+            CleanupBuffer();
             System.Threading.Thread.Sleep(1);
             phy.NI_USB3_WriteReg_M(0, SCI_REG_RUNSTART);
         }
@@ -916,7 +964,7 @@ const UInt32 SCI_REG_CitirocCfg1_REG_CFG0 = 0x100009;
             return b;
         }
 
-        const int PacketSize = 38;
+        const int PacketSize = 41;
         ConcurrentQueue<UInt32> InternalBuffer = new ConcurrentQueue<UInt32>();
         int internalBufferSize = 50000000;
 
@@ -940,6 +988,14 @@ const UInt32 SCI_REG_CitirocCfg1_REG_CFG0 = 0x100009;
         {
             return InternalBuffer.TryDequeue(out q);
         }
+
+        public void CleanupBuffer()
+        {
+            UInt32 q;
+            while (InternalBuffer.IsEmpty == false)
+                InternalBuffer.TryDequeue(out q);
+        }
+
 
 
         public int DecodeCitirocRowEvents(ref Queue<t_DataCITIROC> pC, int ThresholdSoftware)
@@ -1029,8 +1085,22 @@ const UInt32 SCI_REG_CitirocCfg1_REG_CFG0 = 0x100009;
                         }
                         s = 2;
                         break;
-
                     case 2:
+                        PeakFromQueue(out bword);
+                        DataPETIROCA.TriggerID = bword;
+                        s = 3;
+                        break;
+                    case 3:
+                        PeakFromQueue(out bword);
+                        DataPETIROCA.ValidationID = bword;
+                        s = 4;
+                        break;
+                    case 4:
+                        PeakFromQueue(out bword);
+                        DataPETIROCA.Flags = bword;
+                        s = 5;
+                        break;
+                    case 5:
                         PeakFromQueue(out bword);
                         if ((bword & 0xc0000000) == 0xc0000000)
                         {
