@@ -1163,20 +1163,22 @@ namespace DT5550W_P_lib
                 case T0Mode.SOFTWARE_STARTRUN:
                     source = 0;
                     break;
+                case T0Mode.SOFTWARE_REG:
+                    source = 1;
+                    break;
+
                 case T0Mode.SOFTWARE_PERIODIC:
-                    source = 0;
-                    swmode = 1;
+                    source = 2;
                     break;
                 case T0Mode.EXTERNAL:
-                    source = 1;
-                    swmode = 0;
+                    source = 3;
                     break;
 
             }
 
             int period = 160000000 / T0sw_freq;
             phy.NI_USB3_WriteReg_M((UInt32)source, T0_SOURCE);
-            phy.NI_USB3_WriteReg_M((UInt32)swmode, T0_SWMODE);
+            //phy.NI_USB3_WriteReg_M((UInt32)swmode, T0_SWMODE);
             phy.NI_USB3_WriteReg_M((UInt32)period, T0_FREQ);
             phy.NI_USB3_WriteReg_M((UInt32)0, T0_SW);
         }

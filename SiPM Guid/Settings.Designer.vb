@@ -84,6 +84,8 @@ Partial Class Settings
         Me.Label16 = New System.Windows.Forms.Label()
         Me.HVon = New System.Windows.Forms.CheckBox()
         Me.TabPage7 = New System.Windows.Forms.TabPage()
+        Me.multiboard = New System.Windows.Forms.ComboBox()
+        Me.Label28 = New System.Windows.Forms.Label()
         Me.SumSpectrumGain = New System.Windows.Forms.NumericUpDown()
         Me.Label25 = New System.Windows.Forms.Label()
         Me.Button2 = New System.Windows.Forms.Button()
@@ -110,8 +112,7 @@ Partial Class Settings
         Me.TabControl1 = New System.Windows.Forms.TabControl()
         Me.TabPage1 = New System.Windows.Forms.TabPage()
         Me.TabPage2 = New System.Windows.Forms.TabPage()
-        Me.multiboard = New System.Windows.Forms.ComboBox()
-        Me.Label28 = New System.Windows.Forms.Label()
+        Me.pulseT0btn = New System.Windows.Forms.Button()
         Me.TableLayoutPanel1.SuspendLayout()
         Me.Panel1.SuspendLayout()
         Me.Panel5.SuspendLayout()
@@ -580,6 +581,7 @@ Partial Class Settings
         '
         'TabPage5
         '
+        Me.TabPage5.Controls.Add(Me.pulseT0btn)
         Me.TabPage5.Controls.Add(Me.ResetTDConT0)
         Me.TabPage5.Controls.Add(Me.T0Mode)
         Me.TabPage5.Controls.Add(Me.Label8)
@@ -816,6 +818,23 @@ Partial Class Settings
         Me.TabPage7.TabIndex = 4
         Me.TabPage7.Text = "Data Processing"
         Me.TabPage7.UseVisualStyleBackColor = True
+        '
+        'multiboard
+        '
+        Me.multiboard.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+        Me.multiboard.FormattingEnabled = True
+        Me.multiboard.Location = New System.Drawing.Point(397, 94)
+        Me.multiboard.Name = "multiboard"
+        Me.multiboard.Size = New System.Drawing.Size(102, 21)
+        Me.multiboard.TabIndex = 74
+        '
+        'Label28
+        '
+        Me.Label28.Location = New System.Drawing.Point(272, 97)
+        Me.Label28.Name = "Label28"
+        Me.Label28.Size = New System.Drawing.Size(70, 13)
+        Me.Label28.TabIndex = 73
+        Me.Label28.Text = "Multiboard Mode"
         '
         'SumSpectrumGain
         '
@@ -1069,22 +1088,15 @@ Partial Class Settings
         Me.TabPage2.Text = "TabPage2"
         Me.TabPage2.UseVisualStyleBackColor = True
         '
-        'multiboard
+        'pulseT0btn
         '
-        Me.multiboard.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
-        Me.multiboard.FormattingEnabled = True
-        Me.multiboard.Location = New System.Drawing.Point(397, 94)
-        Me.multiboard.Name = "multiboard"
-        Me.multiboard.Size = New System.Drawing.Size(102, 21)
-        Me.multiboard.TabIndex = 74
-        '
-        'Label28
-        '
-        Me.Label28.Location = New System.Drawing.Point(272, 97)
-        Me.Label28.Name = "Label28"
-        Me.Label28.Size = New System.Drawing.Size(70, 13)
-        Me.Label28.TabIndex = 73
-        Me.Label28.Text = "Multiboard Mode"
+        Me.pulseT0btn.Enabled = False
+        Me.pulseT0btn.Location = New System.Drawing.Point(295, 23)
+        Me.pulseT0btn.Name = "pulseT0btn"
+        Me.pulseT0btn.Size = New System.Drawing.Size(140, 23)
+        Me.pulseT0btn.TabIndex = 69
+        Me.pulseT0btn.Text = "Generate T0"
+        Me.pulseT0btn.UseVisualStyleBackColor = True
         '
         'Settings
         '
@@ -1224,4 +1236,5 @@ Partial Class Settings
     Friend WithEvents Label26 As Label
     Friend WithEvents multiboard As ComboBox
     Friend WithEvents Label28 As Label
+    Friend WithEvents pulseT0btn As Button
 End Class

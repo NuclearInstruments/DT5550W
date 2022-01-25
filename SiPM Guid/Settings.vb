@@ -379,8 +379,10 @@ Public Class Settings
 
         T0Mode.Items.Add("FIRST PHOTON")
         T0Mode.Items.Add("FIRST PHOTON ASIC 0")
+        T0Mode.Items.Add("RUN START")
         T0Mode.Items.Add("INTERNAL - PERIODIC")
         T0Mode.Items.Add("EXTERNAL - LEMO 1")
+        T0Mode.Items.Add("SOFTWARE")
         T0Mode.SelectedIndex = 0
 
         monitorMux.Items.Add("None")
@@ -528,11 +530,19 @@ Public Class Settings
                         MainForm.TSM = MainForm.TimeSpectrumMode.FIRST_REF_ASIC_0
 
                     Case 2
-                        t0m = DT5550W_P_lib.T0Mode.SOFTWARE_PERIODIC
+                        t0m = DT5550W_P_lib.T0Mode.SOFTWARE_STARTRUN
                         MainForm.TSM = MainForm.TimeSpectrumMode.T0REF
 
                     Case 3
+                        t0m = DT5550W_P_lib.T0Mode.SOFTWARE_PERIODIC
+                        MainForm.TSM = MainForm.TimeSpectrumMode.T0REF
+
+                    Case 4
                         t0m = DT5550W_P_lib.T0Mode.EXTERNAL
+                        MainForm.TSM = MainForm.TimeSpectrumMode.T0REF
+
+                    Case 5
+                        t0m = DT5550W_P_lib.T0Mode.SOFTWARE_REG
                         MainForm.TSM = MainForm.TimeSpectrumMode.T0REF
 
                 End Select
@@ -596,7 +606,11 @@ Public Class Settings
 
         MainForm.Timer3.Enabled = True
 
-
+        If T0Mode.Text = "SOFTWARE" Then
+            pulseT0btn.Enabled = True
+        Else
+            pulseT0btn.Enabled = False
+        End If
 
     End Sub
 
@@ -847,5 +861,12 @@ Public Class Settings
 
     Private Sub TabPage7_Click(sender As Object, e As EventArgs) Handles TabPage7.Click
 
+    End Sub
+
+    Private Sub Button3_Click(sender As Object, e As EventArgs) Handles pulseT0btn.Click
+        For i = 0 To MainForm.DTList.Count - 1
+            MainForm.DTList(i).PetirocClass.PulseT0()
+
+        Next i
     End Sub
 End Class
