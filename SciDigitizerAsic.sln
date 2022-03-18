@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "SciDigitizerAsic", "SiPM Guid\SciDigitizerAsic.vbproj", "{D8533211-324F-4050-8AF7-B099843EE2C6}"
+	ProjectSection(ProjectDependencies) = postProject
+		{80B146F2-2026-49E4-8F4D-BC36BAD13B61} = {80B146F2-2026-49E4-8F4D-BC36BAD13B61}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DT5550W-P-lib", "DT5550W-P-lib\DT5550W-P-lib.csproj", "{80B146F2-2026-49E4-8F4D-BC36BAD13B61}"
 EndProject

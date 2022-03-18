@@ -32,6 +32,8 @@ Public Class Settings_Citiroc
 
         cfg.TransferSize = TransferSize.Text
         cfg.T0Mode = T0Mode.Text
+        cfg.T0ResetOnRunStart = ResetT0OnRunStart.Checked
+        cfg.RunStartResetSel = RunResetSel.Text
         cfg.HvOutputOn = HVon.Checked
         cfg.HVVoltage = Voltage.Value
         cfg.T0Freq = T0Freq.Value
@@ -64,7 +66,7 @@ Public Class Settings_Citiroc
 
 
         cfg.Rebin = speBin.Text
-
+        cfg.KeepVeto = keepveto.Checked
 
 
         cfg.ValidationEnable = bValidateEnable.Checked
@@ -147,6 +149,8 @@ Public Class Settings_Citiroc
         cfg.TriggerLatch = True
         cfg.HoldDelay = 10
 
+        cfg.KeepVeto = False
+        cfg.RunStartResetSel = "SOFTWARE RUN START"
 
 
         cfg.ValidationEnable = False
@@ -221,6 +225,8 @@ Public Class Settings_Citiroc
 
             TransferSize.Text = cfg.TransferSize
             T0Mode.Text = cfg.T0Mode
+            ResetT0OnRunStart.Checked = cfg.T0ResetOnRunStart
+            RunResetSel.Text = cfg.RunStartResetSel
             HVon.Checked = cfg.HvOutputOn
             Voltage.Value = cfg.HVVoltage
             T0Freq.Value = cfg.T0Freq
@@ -263,7 +269,7 @@ Public Class Settings_Citiroc
             cbValidationMode.SelectedIndex = cfg.ValidationMode
             TrmonoEn.Checked = cfg.TriggerOutMonoEnable
             TrMonoWidth.Value = cfg.TriggerOutMonoTime
-
+            keepveto.Checked = cfg.KeepVeto
 
             Dim asC As Integer = IIf(cfg.AsicCount >= asicCount, asicCount, cfg.AsicCount)
 
@@ -443,7 +449,14 @@ Public Class Settings_Citiroc
         'T0Mode.Items.Add("FIRST PHOTON ASIC 0")
         T0Mode.Items.Add("EXTERNAL - LEMO 1")
         T0Mode.Items.Add("INTERNAL - PERIODIC")
+        T0Mode.Items.Add("T0 BUTTON - SW")
+        T0Mode.Items.Add("DISABLED")
         T0Mode.SelectedIndex = 0
+
+        RunResetSel.Items.Add("SOFTWARE RUN START")
+        RunResetSel.Items.Add("EXTERNAL-LEMO 6")
+        RunResetSel.Items.Add("LATCHED-LEMO 6")
+        RunResetSel.SelectedIndex = 0
 
         monitorMuxAnalog.Items.Add("None")
         monitorMuxAnalog.Items.Add("Preamp Output (LG)")
@@ -725,11 +738,24 @@ Public Class Settings_Citiroc
 
             Select Case T0Mode.Text
                 Case "EXTERNAL - LEMO 1"
-                    MainForm.DTList(i).ConfigureT0(DT5550W_P_lib.T0Mode.EXTERNAL, T0Freq.Value)
+                    MainForm.DTList(i).ConfigureT0(DT5550W_P_lib.T0Mode.EXTERNAL, T0Freq.Value, ResetT0OnRunStart.Checked)
                 Case "INTERNAL - PERIODIC"
-                    MainForm.DTList(i).ConfigureT0(DT5550W_P_lib.T0Mode.SOFTWARE_PERIODIC, T0Freq.Value)
+                    MainForm.DTList(i).ConfigureT0(DT5550W_P_lib.T0Mode.SOFTWARE_PERIODIC, T0Freq.Value, ResetT0OnRunStart.Checked)
+                Case "T0 BUTTON - SW"
+                    MainForm.DTList(i).ConfigureT0(DT5550W_P_lib.T0Mode.SOFTWARE_REG, T0Freq.Value, ResetT0OnRunStart.Checked)
+                Case "DISABLED"
+                    MainForm.DTList(i).ConfigureT0(DT5550W_P_lib.T0Mode.OFF, T0Freq.Value, ResetT0OnRunStart.Checked)
+
             End Select
 
+            Select Case RunResetSel.Text
+                Case "SOFTWARE RUN START"
+                    MainForm.DTList(i).ConfigureRunStartSignal(RunStartMode.INTERNAL_START, False)
+                Case "EXTERNAL-LEMO 6"
+                    MainForm.DTList(i).ConfigureRunStartSignal(RunStartMode.RESET_FROM_EXT, False)
+                Case "LATCHED-LEMO 6"
+                    MainForm.DTList(i).ConfigureRunStartSignal(RunStartMode.LATCHED, keepveto.Checked)
+            End Select
 
             MainForm.DTList(i).CITIROC_SetHoldDelay(HoldDelay.Value)
 
@@ -1066,6 +1092,59 @@ Public Class Settings_Citiroc
     End Sub
 
     Private Sub bValidateEnable_CheckedChanged(sender As Object, e As EventArgs) Handles bValidateEnable.CheckedChanged
+
+    End Sub
+
+    Private Sub Button3_Click(sender As Object, e As EventArgs) Handles Button3.Click
+        For i = 0 To MainForm.DTList.Count - 1
+            MainForm.DTList(i).PulseT0()
+        Next i
+    End Sub
+
+    Private Sub RunResetSel_SelectedIndexChanged(sender As Object, e As EventArgs) Handles RunResetSel.SelectedIndexChanged
+        If RunResetSel.Text <> "LATCHED-LEMO 6" Then
+            keepveto.Checked = False
+            keepveto.Enabled = False
+            waitrunled.Visible = False
+            waitrun_label.Visible = False
+        Else
+            keepveto.Enabled = True
+            waitrunled.Visible = True
+            waitrun_label.Visible = True
+
+        End If
+
+    End Sub
+
+    Dim ledRuntoggle = False
+    Private Sub Timer1_Tick(sender As Object, e As EventArgs) Handles Timer1.Tick
+        If MainForm.running Then
+            If MainForm.STATUSisrunnig = False Then
+                If ledRuntoggle Then
+                    waitrunled.BackColor = Color.Red
+                Else
+                    waitrunled.BackColor = Color.Maroon
+                End If
+                ledRuntoggle = Not ledRuntoggle
+                waitrun_label.Text = "Waiting RUN"
+            Else
+                waitrunled.BackColor = Color.GreenYellow
+                waitrun_label.Text = "Running..."
+            End If
+        Else
+            waitrunled.BackColor = Color.Maroon
+            waitrun_label.Text = "System halted"
+        End If
+
+        If MainForm.STATUSisvetoed Then
+            VETOLED.BackColor = Color.Yellow
+        Else
+            VETOLED.BackColor = Color.Olive
+        End If
+
+    End Sub
+
+    Private Sub ResetT0OnRunStart_CheckedChanged(sender As Object, e As EventArgs) Handles ResetT0OnRunStart.CheckedChanged
 
     End Sub
 End Class

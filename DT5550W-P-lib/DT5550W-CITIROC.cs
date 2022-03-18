@@ -15,6 +15,13 @@ namespace DT5550W_P_lib
         const UInt32 SCI_REG_ALL_FIFO_RESET = 0xFFFFF908;
         const UInt32 SCI_REG_T0_SOFT_FREQ = 0x00000000;
         const UInt32 SCI_REG_T0_SEL = 0x00000001;
+        const UInt32 SCI_REG_T0_SW = 0x0000001C;
+        const UInt32 SCI_REG_GTS_RES_SEL = 0x0000001D;
+        const UInt32 SCI_REG_T0_RESET_ON_RUNSTART = 0x0000001E;
+        const UInt32 SCI_REG_VETO_WAITING_RUN = 0x00000021;
+        const UInt32 SCI_REG_GBL_VETO_EXT = 0x00000022;
+        const UInt32 SCI_REG_INVETO = 0x00000023;
+        const UInt32 SCI_REG_ISRUNNING = 0x0000001F;
         const UInt32 SCI_REG_TRIG_A_SEL = 0x00000003;
         const UInt32 SCI_REG_VET_A_EN = 0x00000004;
         const UInt32 SCI_REG_VET_B_EN = 0x00000005;
@@ -34,6 +41,7 @@ namespace DT5550W_P_lib
         const UInt32 SCI_REG_TMASK_C = 0x00000019;
         const UInt32 SCI_REG_TMASK_D = 0x0000001A;
         const UInt32 SCI_REG_TRG_OUT_MONOSTABLE = 0x0000001B;
+        const UInt32 SCI_REG_TRG_OUT_MONOSTABLE_EN = 0x00000024;
         const UInt32 SCI_REG_A_RATE = 0x00020007;
         const UInt32 SCI_REG_B_RATE = 0x00020008;
         const UInt32 SCI_REG_C_RATE = 0x00020009;
@@ -58,43 +66,82 @@ namespace DT5550W_P_lib
         const UInt32 SCI_REG_CitirocCfg0_REG_CFG0 = 0x10007E;
         const UInt32 SCI_REG_CitirocCfg0_START_REG_CFG = 0x1000A2;
 
-const UInt32 SCI_REG_Oscilloscope_0_FIFOADDRESS = 0x90000;
-        const UInt32 SCI_REG_Oscilloscope_0_READ_STATUS = 0xA0000;
-        const UInt32 SCI_REG_Oscilloscope_0_READ_POSITION = 0xA0001;
-        const UInt32 SCI_REG_Oscilloscope_0_CONFIG_TRIGGER_MODE = 0xA0002;
-        const UInt32 SCI_REG_Oscilloscope_0_CONFIG_PRETRIGGER = 0xA0003;
-        const UInt32 SCI_REG_Oscilloscope_0_CONFIG_TRIGGER_LEVEL = 0xA0004;
-        const UInt32 SCI_REG_Oscilloscope_0_CONFIG_ARM = 0xA0005;
-        const UInt32 SCI_REG_Oscilloscope_0_CONFIG_DECIMATOR = 0xA0006;
+        //const UInt32 SCI_REG_Oscilloscope_0_FIFOADDRESS = 0x90000;
+        //const UInt32 SCI_REG_Oscilloscope_0_READ_STATUS = 0xA0000;
+        //const UInt32 SCI_REG_Oscilloscope_0_READ_POSITION = 0xA0001;
+        //const UInt32 SCI_REG_Oscilloscope_0_CONFIG_TRIGGER_MODE = 0xA0002;
+        //const UInt32 SCI_REG_Oscilloscope_0_CONFIG_PRETRIGGER = 0xA0003;
+        //const UInt32 SCI_REG_Oscilloscope_0_CONFIG_TRIGGER_LEVEL = 0xA0004;
+        //const UInt32 SCI_REG_Oscilloscope_0_CONFIG_ARM = 0xA0005;
+        //const UInt32 SCI_REG_Oscilloscope_0_CONFIG_DECIMATOR = 0xA0006;
 
-const UInt32 SCI_REG_Oscilloscope_1_FIFOADDRESS = 0xB0000;
-        const UInt32 SCI_REG_Oscilloscope_1_READ_STATUS = 0xC0000;
-        const UInt32 SCI_REG_Oscilloscope_1_READ_POSITION = 0xC0001;
-        const UInt32 SCI_REG_Oscilloscope_1_CONFIG_TRIGGER_MODE = 0xC0002;
-        const UInt32 SCI_REG_Oscilloscope_1_CONFIG_PRETRIGGER = 0xC0003;
-        const UInt32 SCI_REG_Oscilloscope_1_CONFIG_TRIGGER_LEVEL = 0xC0004;
-        const UInt32 SCI_REG_Oscilloscope_1_CONFIG_ARM = 0xC0005;
-        const UInt32 SCI_REG_Oscilloscope_1_CONFIG_DECIMATOR = 0xC0006;
+        //const UInt32 SCI_REG_Oscilloscope_1_FIFOADDRESS = 0xB0000;
+        //const UInt32 SCI_REG_Oscilloscope_1_READ_STATUS = 0xC0000;
+        //const UInt32 SCI_REG_Oscilloscope_1_READ_POSITION = 0xC0001;
+        //const UInt32 SCI_REG_Oscilloscope_1_CONFIG_TRIGGER_MODE = 0xC0002;
+        //const UInt32 SCI_REG_Oscilloscope_1_CONFIG_PRETRIGGER = 0xC0003;
+        //const UInt32 SCI_REG_Oscilloscope_1_CONFIG_TRIGGER_LEVEL = 0xC0004;
+        //const UInt32 SCI_REG_Oscilloscope_1_CONFIG_ARM = 0xC0005;
+        //const UInt32 SCI_REG_Oscilloscope_1_CONFIG_DECIMATOR = 0xC0006;
 
-const UInt32 SCI_REG_Oscilloscope_2_FIFOADDRESS = 0xF0000;
-        const UInt32 SCI_REG_Oscilloscope_2_READ_STATUS = 0x100000;
-        const UInt32 SCI_REG_Oscilloscope_2_READ_POSITION = 0x100001;
-        const UInt32 SCI_REG_Oscilloscope_2_CONFIG_TRIGGER_MODE = 0x100002;
-        const UInt32 SCI_REG_Oscilloscope_2_CONFIG_PRETRIGGER = 0x100003;
-        const UInt32 SCI_REG_Oscilloscope_2_CONFIG_TRIGGER_LEVEL = 0x100004;
-        const UInt32 SCI_REG_Oscilloscope_2_CONFIG_ARM = 0x100005;
-        const UInt32 SCI_REG_Oscilloscope_2_CONFIG_DECIMATOR = 0x100006;
+        //const UInt32 SCI_REG_Oscilloscope_2_FIFOADDRESS = 0xF0000;
+        //const UInt32 SCI_REG_Oscilloscope_2_READ_STATUS = 0x100000;
+        //const UInt32 SCI_REG_Oscilloscope_2_READ_POSITION = 0x100001;
+        //const UInt32 SCI_REG_Oscilloscope_2_CONFIG_TRIGGER_MODE = 0x100002;
+        //const UInt32 SCI_REG_Oscilloscope_2_CONFIG_PRETRIGGER = 0x100003;
+        //const UInt32 SCI_REG_Oscilloscope_2_CONFIG_TRIGGER_LEVEL = 0x100004;
+        //const UInt32 SCI_REG_Oscilloscope_2_CONFIG_ARM = 0x100005;
+        //const UInt32 SCI_REG_Oscilloscope_2_CONFIG_DECIMATOR = 0x100006;
 
-const UInt32 SCI_REG_Oscilloscope_3_FIFOADDRESS = 0x10000;
-        const UInt32 SCI_REG_Oscilloscope_3_READ_STATUS = 0x20000;
-        const UInt32 SCI_REG_Oscilloscope_3_READ_POSITION = 0x20001;
-        const UInt32 SCI_REG_Oscilloscope_3_CONFIG_TRIGGER_MODE = 0x20002;
-        const UInt32 SCI_REG_Oscilloscope_3_CONFIG_PRETRIGGER = 0x20003;
-        const UInt32 SCI_REG_Oscilloscope_3_CONFIG_TRIGGER_LEVEL = 0x20004;
-        const UInt32 SCI_REG_Oscilloscope_3_CONFIG_ARM = 0x20005;
-        const UInt32 SCI_REG_Oscilloscope_3_CONFIG_DECIMATOR = 0x20006;
+        //const UInt32 SCI_REG_Oscilloscope_3_FIFOADDRESS = 0x10000;
+        //const UInt32 SCI_REG_Oscilloscope_3_READ_STATUS = 0x20000;
+        //const UInt32 SCI_REG_Oscilloscope_3_READ_POSITION = 0x20001;
+        //const UInt32 SCI_REG_Oscilloscope_3_CONFIG_TRIGGER_MODE = 0x20002;
+        //const UInt32 SCI_REG_Oscilloscope_3_CONFIG_PRETRIGGER = 0x20003;
+        //const UInt32 SCI_REG_Oscilloscope_3_CONFIG_TRIGGER_LEVEL = 0x20004;
+        //const UInt32 SCI_REG_Oscilloscope_3_CONFIG_ARM = 0x20005;
+        //const UInt32 SCI_REG_Oscilloscope_3_CONFIG_DECIMATOR = 0x20006;
 
-const UInt32 SCI_REG_CitirocFrame0_FIFOADDRESS = 0x2001A;
+
+
+        const UInt32 SCI_REG_Oscilloscope_0_FIFOADDRESS = 0x90000;
+        const UInt32 SCI_REG_Oscilloscope_0_READ_STATUS = 0x90800;
+        const UInt32 SCI_REG_Oscilloscope_0_READ_POSITION = 0x90801;
+        const UInt32 SCI_REG_Oscilloscope_0_CONFIG_TRIGGER_MODE = 0x90802;
+        const UInt32 SCI_REG_Oscilloscope_0_CONFIG_PRETRIGGER = 0x90803;
+        const UInt32 SCI_REG_Oscilloscope_0_CONFIG_TRIGGER_LEVEL = 0x90804;
+        const UInt32 SCI_REG_Oscilloscope_0_CONFIG_ARM = 0x90805;
+        const UInt32 SCI_REG_Oscilloscope_0_CONFIG_DECIMATOR = 0x90806;
+
+        const UInt32 SCI_REG_Oscilloscope_1_FIFOADDRESS = 0xB0000;
+        const UInt32 SCI_REG_Oscilloscope_1_READ_STATUS = 0xB0800;
+        const UInt32 SCI_REG_Oscilloscope_1_READ_POSITION = 0xB0801;
+        const UInt32 SCI_REG_Oscilloscope_1_CONFIG_TRIGGER_MODE = 0xB0802;
+        const UInt32 SCI_REG_Oscilloscope_1_CONFIG_PRETRIGGER = 0xB0803;
+        const UInt32 SCI_REG_Oscilloscope_1_CONFIG_TRIGGER_LEVEL = 0xB0804;
+        const UInt32 SCI_REG_Oscilloscope_1_CONFIG_ARM = 0xB0805;
+        const UInt32 SCI_REG_Oscilloscope_1_CONFIG_DECIMATOR = 0xB0806;
+
+        const UInt32 SCI_REG_Oscilloscope_2_FIFOADDRESS = 0xF0000;
+        const UInt32 SCI_REG_Oscilloscope_2_READ_STATUS = 0xF0800;
+        const UInt32 SCI_REG_Oscilloscope_2_READ_POSITION = 0xF0801;
+        const UInt32 SCI_REG_Oscilloscope_2_CONFIG_TRIGGER_MODE = 0xF0802;
+        const UInt32 SCI_REG_Oscilloscope_2_CONFIG_PRETRIGGER = 0xF0803;
+        const UInt32 SCI_REG_Oscilloscope_2_CONFIG_TRIGGER_LEVEL = 0xF0804;
+        const UInt32 SCI_REG_Oscilloscope_2_CONFIG_ARM = 0xF0805;
+        const UInt32 SCI_REG_Oscilloscope_2_CONFIG_DECIMATOR = 0xF0806;
+
+        const UInt32 SCI_REG_Oscilloscope_3_FIFOADDRESS = 0x10000;
+        const UInt32 SCI_REG_Oscilloscope_3_READ_STATUS = 0x10800;
+        const UInt32 SCI_REG_Oscilloscope_3_READ_POSITION = 0x10801;
+        const UInt32 SCI_REG_Oscilloscope_3_CONFIG_TRIGGER_MODE = 0x10802;
+        const UInt32 SCI_REG_Oscilloscope_3_CONFIG_PRETRIGGER = 0x10803;
+        const UInt32 SCI_REG_Oscilloscope_3_CONFIG_TRIGGER_LEVEL = 0x10804;
+        const UInt32 SCI_REG_Oscilloscope_3_CONFIG_ARM = 0x10805;
+        const UInt32 SCI_REG_Oscilloscope_3_CONFIG_DECIMATOR = 0x10806;
+
+
+        const UInt32 SCI_REG_CitirocFrame0_FIFOADDRESS = 0x2001A;
         const UInt32 SCI_REG_CitirocFrame0_CONTROL = 0x2001B;
         const UInt32 SCI_REG_CitirocFrame0_STATUS = 0x2001C;
 
@@ -554,12 +601,14 @@ const UInt32 SCI_REG_CitirocCfg1_REG_CFG0 = 0x100009;
 
         public int SetTrigOUTMonostable(UInt32 time)
         {
+            bool enable = false;
             UInt32 v=0;
             if (time > 0)
             {
-                v = 0x80000000;
-                v += (time / 8) - 1;
+                enable = true;
+                v = (time / 8) - 1;
             }
+            phy.NI_USB3_WriteReg_M(enable ? 1U:0U, SCI_REG_TRG_OUT_MONOSTABLE_EN);
             return phy.NI_USB3_WriteReg_M(v, SCI_REG_TRG_OUT_MONOSTABLE);
         }
 
@@ -716,19 +765,19 @@ const UInt32 SCI_REG_CitirocCfg1_REG_CFG0 = 0x100009;
        
         public void EnableExternalVeto(bool enable)
         {
+            phy.NI_USB3_WriteReg_M(1, SCI_REG_VET_A_EN);
+            phy.NI_USB3_WriteReg_M(1, SCI_REG_VET_B_EN);
+            phy.NI_USB3_WriteReg_M(1, SCI_REG_VET_C_EN);
+            phy.NI_USB3_WriteReg_M(1, SCI_REG_VET_D_EN);
+
+
             if (enable)
             {
-                phy.NI_USB3_WriteReg_M(1, SCI_REG_VET_A_EN);
-                phy.NI_USB3_WriteReg_M(1, SCI_REG_VET_B_EN);
-                phy.NI_USB3_WriteReg_M(1, SCI_REG_VET_C_EN);
-                phy.NI_USB3_WriteReg_M(1, SCI_REG_VET_D_EN);
+                phy.NI_USB3_WriteReg_M(1, SCI_REG_GBL_VETO_EXT );
             }
             else
             {
-                phy.NI_USB3_WriteReg_M(0, SCI_REG_VET_A_EN);
-                phy.NI_USB3_WriteReg_M(0, SCI_REG_VET_B_EN);
-                phy.NI_USB3_WriteReg_M(0, SCI_REG_VET_C_EN);
-                phy.NI_USB3_WriteReg_M(0, SCI_REG_VET_D_EN);
+                phy.NI_USB3_WriteReg_M(0, SCI_REG_GBL_VETO_EXT);
             }
         }
 
@@ -736,6 +785,11 @@ const UInt32 SCI_REG_CitirocCfg1_REG_CFG0 = 0x100009;
         public void GetBuild(ref UInt32 build)
         {
             phy.NI_USB3_ReadReg_M(ref build, 0xFFFFFFFA);
+        }
+
+        public void GetMagic(ref UInt32 unique)
+        {
+            phy.NI_USB3_ReadReg_M(ref unique, 0xFFFFFFFC);
         }
 
         public void SetASICVeto(bool A1, bool A2, bool A3, bool A4)
@@ -877,22 +931,23 @@ const UInt32 SCI_REG_CitirocCfg1_REG_CFG0 = 0x100009;
 
         public void FlushFIFO()
         {
-            phy.NI_USB3_WriteReg_M(0, SCI_REG_RUNSTART);
-            System.Threading.Thread.Sleep(1);
+           // phy.NI_USB3_WriteReg_M(0, SCI_REG_RUNSTART);
+           // System.Threading.Thread.Sleep(1);
             phy.NI_USB3_WriteReg_M(1, SCI_REG_RUNSTART);
-            CleanupBuffer();
             System.Threading.Thread.Sleep(1);
-            phy.NI_USB3_WriteReg_M(0, SCI_REG_RUNSTART);
+            CleanupBuffer();
+           // System.Threading.Thread.Sleep(1);
+           // phy.NI_USB3_WriteReg_M(0, SCI_REG_RUNSTART);
         }
 
 
 
         public void ExtVetoEnable(bool enable)
         {
-            phy.NI_USB3_WriteReg_M((UInt32)(enable == true ? 1 : 0), SCI_REG_VET_A_EN);
+            /*phy.NI_USB3_WriteReg_M((UInt32)(enable == true ? 1 : 0), SCI_REG_VET_A_EN);
             phy.NI_USB3_WriteReg_M((UInt32)(enable == true ? 1 : 0), SCI_REG_VET_B_EN);
             phy.NI_USB3_WriteReg_M((UInt32)(enable == true ? 1 : 0), SCI_REG_VET_C_EN);
-            phy.NI_USB3_WriteReg_M((UInt32)(enable == true ? 1 : 0), SCI_REG_VET_D_EN);
+            phy.NI_USB3_WriteReg_M((UInt32)(enable == true ? 1 : 0), SCI_REG_VET_D_EN);*/
         }
 
 
@@ -924,10 +979,9 @@ const UInt32 SCI_REG_CitirocCfg1_REG_CFG0 = 0x100009;
         }
 
 
-        public void ConfigureT0(T0Mode mode, int T0sw_freq)
+        public void ConfigureT0(T0Mode mode, int T0sw_freq, bool enable_t0_reset_on_runstart)
         {
             int source = 0;
-            int swmode = 0;
             switch (mode)
             {
                 case T0Mode.SOFTWARE_PERIODIC:
@@ -936,6 +990,12 @@ const UInt32 SCI_REG_CitirocCfg1_REG_CFG0 = 0x100009;
                 case T0Mode.EXTERNAL:
                     source = 0;
                     break;
+                case T0Mode.OFF:
+                    source = 3;
+                    break;
+                case T0Mode.SOFTWARE_REG:
+                    source = 2;
+                    break;
 
             }
 
@@ -943,6 +1003,8 @@ const UInt32 SCI_REG_CitirocCfg1_REG_CFG0 = 0x100009;
             phy.NI_USB3_WriteReg_M((UInt32)source, SCI_REG_T0_SEL);
             //phy.NI_USB3_WriteReg_M((UInt32)swmode, T0_SWMODE);
             phy.NI_USB3_WriteReg_M((UInt32)period, SCI_REG_T0_SOFT_FREQ);
+
+            phy.NI_USB3_WriteReg_M((UInt32)(enable_t0_reset_on_runstart ? 1:0), SCI_REG_T0_RESET_ON_RUNSTART);
             //phy.NI_USB3_WriteReg_M((UInt32)0, T0_SW);
         }
 
@@ -952,8 +1014,40 @@ const UInt32 SCI_REG_CitirocCfg1_REG_CFG0 = 0x100009;
             /*phy.NI_USB3_WriteReg_M((UInt32)0, T0_SW);
             phy.NI_USB3_WriteReg_M((UInt32)1, T0_SW);
             phy.NI_USB3_WriteReg_M((UInt32)0, T0_SW);*/
+
+            phy.NI_USB3_WriteReg_M((UInt32)1, SCI_REG_T0_SW);
+            phy.NI_USB3_WriteReg_M((UInt32)0, SCI_REG_T0_SW);
         }
 
+        public void ConfigureRunStartSignal(RunStartMode mode, bool VetoOnRunning)
+        {
+            int source = 0;
+            switch (mode)
+            {
+                case RunStartMode.INTERNAL_START:
+                    source = 0;
+                    break;
+                case RunStartMode.RESET_FROM_EXT:
+                    source = 1;
+                    break;
+                case RunStartMode.LATCHED:
+                    source = 2;
+                    break;
+            }
+            phy.NI_USB3_WriteReg_M((UInt32)source, SCI_REG_GTS_RES_SEL);
+            phy.NI_USB3_WriteReg_M((UInt32)(VetoOnRunning?1:0), SCI_REG_VETO_WAITING_RUN);
+            
+
+        }
+
+        public void GetDAQStatus(ref bool isRunning, ref bool isVetod)
+        {
+            UInt32 v =0;
+            phy.NI_USB3_ReadReg_M( ref v, SCI_REG_INVETO);
+            isVetod = v > 0 ? true : false;
+            phy.NI_USB3_ReadReg_M(ref v, SCI_REG_ISRUNNING);
+            isRunning = v > 0 ? true : false;
+        }
 
 
         public bool ConfigCitiroc(bool progA, bool progB, bool progC, bool progD, UInt32[] cfg)

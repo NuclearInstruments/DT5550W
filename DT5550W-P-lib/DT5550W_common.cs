@@ -15,8 +15,10 @@ namespace DT5550W_P_lib
     }
     public enum TriggerMode { TIME_TRIG, CHARGE_TRIG, EXT_TRIG, GBL_TRIG_TIME, GBL_TRIG_CHARGE, SELF_TRIG, TWO_COINC_TIME, GBL_TWO_COINC_TIME };
 
-    public enum T0Mode { SOFTWARE_STARTRUN = 0, SOFTWARE_REG = 1, SOFTWARE_PERIODIC = 2, EXTERNAL = 3 };
+    public enum T0Mode { SOFTWARE_STARTRUN = 0, SOFTWARE_REG = 1, SOFTWARE_PERIODIC = 2, EXTERNAL = 3, OFF = 4 };
     public enum PCMode { PERIODIC_WIN = 0, EXTERNAL_WIN = 1, PERIODIC_WIN_EXT_START =2, PERIODIC_WIN_INT_START =3};
+
+    public enum RunStartMode { INTERNAL_START = 0, RESET_FROM_EXT = 1, LATCHED = 2 };
 
     public enum t_AsicModels
     {

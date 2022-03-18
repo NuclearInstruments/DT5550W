@@ -69,7 +69,9 @@
     Public ChannelDigital As Integer
     Public HoldDelay As Integer
     Public UseInternalAsicTriggerPath As Boolean
-
+    Public T0ResetOnRunStart As Boolean
+    Public RunStartResetSel As String
+    Public KeepVeto As Boolean
 
     Public sA() As SingleAsicCFG
 

@@ -22,6 +22,7 @@ Partial Class Settings_Citiroc
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
+        Me.components = New System.ComponentModel.Container()
         Me.TableLayoutPanel1 = New System.Windows.Forms.TableLayoutPanel()
         Me.Panel1 = New System.Windows.Forms.Panel()
         Me.Panel5 = New System.Windows.Forms.Panel()
@@ -46,6 +47,11 @@ Partial Class Settings_Citiroc
         Me.ScaBias = New System.Windows.Forms.ComboBox()
         Me.Label1 = New System.Windows.Forms.Label()
         Me.TabPage4 = New System.Windows.Forms.TabPage()
+        Me.GroupBox4 = New System.Windows.Forms.GroupBox()
+        Me.TrMonoWidth = New System.Windows.Forms.NumericUpDown()
+        Me.TrmonoEn = New System.Windows.Forms.CheckBox()
+        Me.Label44 = New System.Windows.Forms.Label()
+        Me.Label43 = New System.Windows.Forms.Label()
         Me.InternalTriggerPath = New System.Windows.Forms.CheckBox()
         Me.LabelHoldNs = New System.Windows.Forms.Label()
         Me.HoldDelay = New System.Windows.Forms.NumericUpDown()
@@ -69,6 +75,10 @@ Partial Class Settings_Citiroc
         Me.SoftwareTrigger = New System.Windows.Forms.NumericUpDown()
         Me.Label19 = New System.Windows.Forms.Label()
         Me.TabPage5 = New System.Windows.Forms.TabPage()
+        Me.Button3 = New System.Windows.Forms.Button()
+        Me.RunResetSel = New System.Windows.Forms.ComboBox()
+        Me.Label42 = New System.Windows.Forms.Label()
+        Me.ResetT0OnRunStart = New System.Windows.Forms.CheckBox()
         Me.T0Mode = New System.Windows.Forms.ComboBox()
         Me.Label8 = New System.Windows.Forms.Label()
         Me.T0Freq = New System.Windows.Forms.NumericUpDown()
@@ -91,6 +101,7 @@ Partial Class Settings_Citiroc
         Me.Label41 = New System.Windows.Forms.Label()
         Me.FileSeparator = New System.Windows.Forms.ComboBox()
         Me.GroupBox3 = New System.Windows.Forms.GroupBox()
+        Me.cbValidationMode = New System.Windows.Forms.ComboBox()
         Me.processFake = New System.Windows.Forms.CheckBox()
         Me.Label40 = New System.Windows.Forms.Label()
         Me.bValidateWin = New System.Windows.Forms.NumericUpDown()
@@ -140,13 +151,14 @@ Partial Class Settings_Citiroc
         Me.TabControl1 = New System.Windows.Forms.TabControl()
         Me.TabPage1 = New System.Windows.Forms.TabPage()
         Me.TabPage2 = New System.Windows.Forms.TabPage()
-        Me.TrMonoWidth = New System.Windows.Forms.NumericUpDown()
-        Me.TrmonoEn = New System.Windows.Forms.CheckBox()
-        Me.Label43 = New System.Windows.Forms.Label()
-        Me.Label44 = New System.Windows.Forms.Label()
-        Me.GroupBox4 = New System.Windows.Forms.GroupBox()
         Me.BackgroundWorker1 = New System.ComponentModel.BackgroundWorker()
-        Me.cbValidationMode = New System.Windows.Forms.ComboBox()
+        Me.keepveto = New System.Windows.Forms.CheckBox()
+        Me.waitrunled = New System.Windows.Forms.PictureBox()
+        Me.waitrun_label = New System.Windows.Forms.Label()
+        Me.Timer1 = New System.Windows.Forms.Timer(Me.components)
+        Me.VETOLED = New System.Windows.Forms.PictureBox()
+        Me.GroupBox5 = New System.Windows.Forms.GroupBox()
+        Me.GroupBox6 = New System.Windows.Forms.GroupBox()
         Me.TableLayoutPanel1.SuspendLayout()
         Me.Panel1.SuspendLayout()
         Me.Panel5.SuspendLayout()
@@ -155,6 +167,8 @@ Partial Class Settings_Citiroc
         Me.TabControl2.SuspendLayout()
         Me.TabPage3.SuspendLayout()
         Me.TabPage4.SuspendLayout()
+        Me.GroupBox4.SuspendLayout()
+        CType(Me.TrMonoWidth, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.HoldDelay, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.GroupBox2.SuspendLayout()
         CType(Me.A_TimeTHR, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -182,8 +196,10 @@ Partial Class Settings_Citiroc
         CType(Me.pc_WW, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.Panel3.SuspendLayout()
         Me.TabControl1.SuspendLayout()
-        CType(Me.TrMonoWidth, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.GroupBox4.SuspendLayout()
+        CType(Me.waitrunled, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.VETOLED, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.GroupBox5.SuspendLayout()
+        Me.GroupBox6.SuspendLayout()
         Me.SuspendLayout()
         '
         'TableLayoutPanel1
@@ -459,6 +475,57 @@ Partial Class Settings_Citiroc
         Me.TabPage4.Text = "Trigger"
         Me.TabPage4.UseVisualStyleBackColor = True
         '
+        'GroupBox4
+        '
+        Me.GroupBox4.Controls.Add(Me.TrMonoWidth)
+        Me.GroupBox4.Controls.Add(Me.TrmonoEn)
+        Me.GroupBox4.Controls.Add(Me.Label44)
+        Me.GroupBox4.Controls.Add(Me.Label43)
+        Me.GroupBox4.Location = New System.Drawing.Point(306, 146)
+        Me.GroupBox4.Name = "GroupBox4"
+        Me.GroupBox4.Size = New System.Drawing.Size(293, 76)
+        Me.GroupBox4.TabIndex = 89
+        Me.GroupBox4.TabStop = False
+        Me.GroupBox4.Text = "Trigger Output - LEMO 2"
+        '
+        'TrMonoWidth
+        '
+        Me.TrMonoWidth.BackColor = System.Drawing.Color.White
+        Me.TrMonoWidth.Increment = New Decimal(New Integer() {8, 0, 0, 0})
+        Me.TrMonoWidth.Location = New System.Drawing.Point(132, 46)
+        Me.TrMonoWidth.Maximum = New Decimal(New Integer() {500000, 0, 0, 0})
+        Me.TrMonoWidth.Minimum = New Decimal(New Integer() {8, 0, 0, 0})
+        Me.TrMonoWidth.Name = "TrMonoWidth"
+        Me.TrMonoWidth.Size = New System.Drawing.Size(80, 20)
+        Me.TrMonoWidth.TabIndex = 85
+        Me.TrMonoWidth.Value = New Decimal(New Integer() {64, 0, 0, 0})
+        '
+        'TrmonoEn
+        '
+        Me.TrmonoEn.AutoSize = True
+        Me.TrmonoEn.Location = New System.Drawing.Point(16, 23)
+        Me.TrmonoEn.Name = "TrmonoEn"
+        Me.TrmonoEn.Size = New System.Drawing.Size(196, 17)
+        Me.TrmonoEn.TabIndex = 86
+        Me.TrmonoEn.Text = "Enable monostable on trigger outout"
+        Me.TrmonoEn.UseVisualStyleBackColor = True
+        '
+        'Label44
+        '
+        Me.Label44.Location = New System.Drawing.Point(228, 48)
+        Me.Label44.Name = "Label44"
+        Me.Label44.Size = New System.Drawing.Size(99, 18)
+        Me.Label44.TabIndex = 88
+        Me.Label44.Text = "ns"
+        '
+        'Label43
+        '
+        Me.Label43.Location = New System.Drawing.Point(13, 48)
+        Me.Label43.Name = "Label43"
+        Me.Label43.Size = New System.Drawing.Size(113, 18)
+        Me.Label43.TabIndex = 87
+        Me.Label43.Text = "Trigger Out min pulse width"
+        '
         'InternalTriggerPath
         '
         Me.InternalTriggerPath.AutoSize = True
@@ -536,6 +603,7 @@ Partial Class Settings_Citiroc
         '
         'GroupBox2
         '
+        Me.GroupBox2.Controls.Add(Me.VETOLED)
         Me.GroupBox2.Controls.Add(Me.EnableExternalVeto)
         Me.GroupBox2.Controls.Add(Me.swVeto4)
         Me.GroupBox2.Controls.Add(Me.swVeto3)
@@ -679,10 +747,8 @@ Partial Class Settings_Citiroc
         '
         'TabPage5
         '
-        Me.TabPage5.Controls.Add(Me.T0Mode)
-        Me.TabPage5.Controls.Add(Me.Label8)
-        Me.TabPage5.Controls.Add(Me.T0Freq)
-        Me.TabPage5.Controls.Add(Me.Label9)
+        Me.TabPage5.Controls.Add(Me.GroupBox6)
+        Me.TabPage5.Controls.Add(Me.GroupBox5)
         Me.TabPage5.Location = New System.Drawing.Point(4, 22)
         Me.TabPage5.Name = "TabPage5"
         Me.TabPage5.Padding = New System.Windows.Forms.Padding(3)
@@ -691,18 +757,54 @@ Partial Class Settings_Citiroc
         Me.TabPage5.Text = "Timestamp"
         Me.TabPage5.UseVisualStyleBackColor = True
         '
+        'Button3
+        '
+        Me.Button3.Location = New System.Drawing.Point(192, 89)
+        Me.Button3.Name = "Button3"
+        Me.Button3.Size = New System.Drawing.Size(116, 30)
+        Me.Button3.TabIndex = 68
+        Me.Button3.Text = "T0 - SW"
+        Me.Button3.UseVisualStyleBackColor = True
+        '
+        'RunResetSel
+        '
+        Me.RunResetSel.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+        Me.RunResetSel.FormattingEnabled = True
+        Me.RunResetSel.Location = New System.Drawing.Point(137, 22)
+        Me.RunResetSel.Name = "RunResetSel"
+        Me.RunResetSel.Size = New System.Drawing.Size(167, 21)
+        Me.RunResetSel.TabIndex = 67
+        '
+        'Label42
+        '
+        Me.Label42.Location = New System.Drawing.Point(19, 25)
+        Me.Label42.Name = "Label42"
+        Me.Label42.Size = New System.Drawing.Size(112, 13)
+        Me.Label42.TabIndex = 66
+        Me.Label42.Text = "Run Reset Mode"
+        '
+        'ResetT0OnRunStart
+        '
+        Me.ResetT0OnRunStart.AutoSize = True
+        Me.ResetT0OnRunStart.Location = New System.Drawing.Point(13, 92)
+        Me.ResetT0OnRunStart.Name = "ResetT0OnRunStart"
+        Me.ResetT0OnRunStart.Size = New System.Drawing.Size(133, 17)
+        Me.ResetT0OnRunStart.TabIndex = 65
+        Me.ResetT0OnRunStart.Text = "Reset T0 un Run Start"
+        Me.ResetT0OnRunStart.UseVisualStyleBackColor = True
+        '
         'T0Mode
         '
         Me.T0Mode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
         Me.T0Mode.FormattingEnabled = True
-        Me.T0Mode.Location = New System.Drawing.Point(119, 21)
+        Me.T0Mode.Location = New System.Drawing.Point(109, 23)
         Me.T0Mode.Name = "T0Mode"
-        Me.T0Mode.Size = New System.Drawing.Size(112, 21)
+        Me.T0Mode.Size = New System.Drawing.Size(199, 21)
         Me.T0Mode.TabIndex = 62
         '
         'Label8
         '
-        Me.Label8.Location = New System.Drawing.Point(20, 24)
+        Me.Label8.Location = New System.Drawing.Point(10, 26)
         Me.Label8.Name = "Label8"
         Me.Label8.Size = New System.Drawing.Size(70, 13)
         Me.Label8.TabIndex = 61
@@ -711,7 +813,7 @@ Partial Class Settings_Citiroc
         'T0Freq
         '
         Me.T0Freq.BackColor = System.Drawing.Color.White
-        Me.T0Freq.Location = New System.Drawing.Point(119, 52)
+        Me.T0Freq.Location = New System.Drawing.Point(109, 55)
         Me.T0Freq.Maximum = New Decimal(New Integer() {10000000, 0, 0, 0})
         Me.T0Freq.Minimum = New Decimal(New Integer() {1, 0, 0, 0})
         Me.T0Freq.Name = "T0Freq"
@@ -721,7 +823,7 @@ Partial Class Settings_Citiroc
         '
         'Label9
         '
-        Me.Label9.Location = New System.Drawing.Point(19, 56)
+        Me.Label9.Location = New System.Drawing.Point(9, 59)
         Me.Label9.Name = "Label9"
         Me.Label9.Size = New System.Drawing.Size(92, 16)
         Me.Label9.TabIndex = 63
@@ -938,6 +1040,15 @@ Partial Class Settings_Citiroc
         Me.GroupBox3.TabIndex = 79
         Me.GroupBox3.TabStop = False
         Me.GroupBox3.Text = "Validation (LEMO 5)"
+        '
+        'cbValidationMode
+        '
+        Me.cbValidationMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+        Me.cbValidationMode.FormattingEnabled = True
+        Me.cbValidationMode.Location = New System.Drawing.Point(137, 19)
+        Me.cbValidationMode.Name = "cbValidationMode"
+        Me.cbValidationMode.Size = New System.Drawing.Size(89, 21)
+        Me.cbValidationMode.TabIndex = 83
         '
         'processFake
         '
@@ -1405,65 +1516,80 @@ Partial Class Settings_Citiroc
         Me.TabPage2.Text = "TabPage2"
         Me.TabPage2.UseVisualStyleBackColor = True
         '
-        'TrMonoWidth
+        'keepveto
         '
-        Me.TrMonoWidth.BackColor = System.Drawing.Color.White
-        Me.TrMonoWidth.Increment = New Decimal(New Integer() {8, 0, 0, 0})
-        Me.TrMonoWidth.Location = New System.Drawing.Point(132, 46)
-        Me.TrMonoWidth.Maximum = New Decimal(New Integer() {500000, 0, 0, 0})
-        Me.TrMonoWidth.Minimum = New Decimal(New Integer() {8, 0, 0, 0})
-        Me.TrMonoWidth.Name = "TrMonoWidth"
-        Me.TrMonoWidth.Size = New System.Drawing.Size(80, 20)
-        Me.TrMonoWidth.TabIndex = 85
-        Me.TrMonoWidth.Value = New Decimal(New Integer() {64, 0, 0, 0})
+        Me.keepveto.AutoSize = True
+        Me.keepveto.Location = New System.Drawing.Point(22, 59)
+        Me.keepveto.Name = "keepveto"
+        Me.keepveto.Size = New System.Drawing.Size(223, 17)
+        Me.keepveto.TabIndex = 69
+        Me.keepveto.Text = "VETO waiting RUN (LEMO 6) from master"
+        Me.keepveto.UseVisualStyleBackColor = True
         '
-        'TrmonoEn
+        'waitrunled
         '
-        Me.TrmonoEn.AutoSize = True
-        Me.TrmonoEn.Location = New System.Drawing.Point(16, 23)
-        Me.TrmonoEn.Name = "TrmonoEn"
-        Me.TrmonoEn.Size = New System.Drawing.Size(196, 17)
-        Me.TrmonoEn.TabIndex = 86
-        Me.TrmonoEn.Text = "Enable monostable on trigger outout"
-        Me.TrmonoEn.UseVisualStyleBackColor = True
+        Me.waitrunled.BackColor = System.Drawing.Color.FromArgb(CType(CType(64, Byte), Integer), CType(CType(0, Byte), Integer), CType(CType(0, Byte), Integer))
+        Me.waitrunled.Location = New System.Drawing.Point(16, 90)
+        Me.waitrunled.Name = "waitrunled"
+        Me.waitrunled.Size = New System.Drawing.Size(30, 28)
+        Me.waitrunled.TabIndex = 70
+        Me.waitrunled.TabStop = False
+        Me.waitrunled.Visible = False
         '
-        'Label43
+        'waitrun_label
         '
-        Me.Label43.Location = New System.Drawing.Point(13, 48)
-        Me.Label43.Name = "Label43"
-        Me.Label43.Size = New System.Drawing.Size(113, 18)
-        Me.Label43.TabIndex = 87
-        Me.Label43.Text = "Trigger Out min pulse width"
+        Me.waitrun_label.AutoSize = True
+        Me.waitrun_label.Location = New System.Drawing.Point(52, 98)
+        Me.waitrun_label.Name = "waitrun_label"
+        Me.waitrun_label.Size = New System.Drawing.Size(66, 13)
+        Me.waitrun_label.TabIndex = 71
+        Me.waitrun_label.Text = "Waiting Run"
+        Me.waitrun_label.Visible = False
         '
-        'Label44
+        'Timer1
         '
-        Me.Label44.Location = New System.Drawing.Point(228, 48)
-        Me.Label44.Name = "Label44"
-        Me.Label44.Size = New System.Drawing.Size(99, 18)
-        Me.Label44.TabIndex = 88
-        Me.Label44.Text = "ns"
+        Me.Timer1.Enabled = True
+        Me.Timer1.Interval = 500
         '
-        'GroupBox4
+        'VETOLED
         '
-        Me.GroupBox4.Controls.Add(Me.TrMonoWidth)
-        Me.GroupBox4.Controls.Add(Me.TrmonoEn)
-        Me.GroupBox4.Controls.Add(Me.Label44)
-        Me.GroupBox4.Controls.Add(Me.Label43)
-        Me.GroupBox4.Location = New System.Drawing.Point(306, 146)
-        Me.GroupBox4.Name = "GroupBox4"
-        Me.GroupBox4.Size = New System.Drawing.Size(293, 76)
-        Me.GroupBox4.TabIndex = 89
-        Me.GroupBox4.TabStop = False
-        Me.GroupBox4.Text = "Trigger Output - LEMO 2"
+        Me.VETOLED.BackColor = System.Drawing.Color.Olive
+        Me.VETOLED.Location = New System.Drawing.Point(184, 24)
+        Me.VETOLED.Name = "VETOLED"
+        Me.VETOLED.Size = New System.Drawing.Size(30, 28)
+        Me.VETOLED.TabIndex = 71
+        Me.VETOLED.TabStop = False
         '
-        'cbValidationMode
+        'GroupBox5
         '
-        Me.cbValidationMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
-        Me.cbValidationMode.FormattingEnabled = True
-        Me.cbValidationMode.Location = New System.Drawing.Point(137, 19)
-        Me.cbValidationMode.Name = "cbValidationMode"
-        Me.cbValidationMode.Size = New System.Drawing.Size(89, 21)
-        Me.cbValidationMode.TabIndex = 83
+        Me.GroupBox5.Controls.Add(Me.waitrunled)
+        Me.GroupBox5.Controls.Add(Me.waitrun_label)
+        Me.GroupBox5.Controls.Add(Me.keepveto)
+        Me.GroupBox5.Controls.Add(Me.RunResetSel)
+        Me.GroupBox5.Controls.Add(Me.Label42)
+        Me.GroupBox5.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.GroupBox5.Location = New System.Drawing.Point(385, 24)
+        Me.GroupBox5.Name = "GroupBox5"
+        Me.GroupBox5.Size = New System.Drawing.Size(324, 134)
+        Me.GroupBox5.TabIndex = 72
+        Me.GroupBox5.TabStop = False
+        Me.GroupBox5.Text = "RUN TIMESTAMP SETUP"
+        '
+        'GroupBox6
+        '
+        Me.GroupBox6.Controls.Add(Me.T0Mode)
+        Me.GroupBox6.Controls.Add(Me.Label8)
+        Me.GroupBox6.Controls.Add(Me.T0Freq)
+        Me.GroupBox6.Controls.Add(Me.Label9)
+        Me.GroupBox6.Controls.Add(Me.ResetT0OnRunStart)
+        Me.GroupBox6.Controls.Add(Me.Button3)
+        Me.GroupBox6.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.GroupBox6.Location = New System.Drawing.Point(19, 24)
+        Me.GroupBox6.Name = "GroupBox6"
+        Me.GroupBox6.Size = New System.Drawing.Size(324, 134)
+        Me.GroupBox6.TabIndex = 73
+        Me.GroupBox6.TabStop = False
+        Me.GroupBox6.Text = "T0 TIMESTAMP SETUP"
         '
         'Settings_Citiroc
         '
@@ -1482,6 +1608,9 @@ Partial Class Settings_Citiroc
         Me.TabPage3.PerformLayout()
         Me.TabPage4.ResumeLayout(False)
         Me.TabPage4.PerformLayout()
+        Me.GroupBox4.ResumeLayout(False)
+        Me.GroupBox4.PerformLayout()
+        CType(Me.TrMonoWidth, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.HoldDelay, System.ComponentModel.ISupportInitialize).EndInit()
         Me.GroupBox2.ResumeLayout(False)
         Me.GroupBox2.PerformLayout()
@@ -1513,9 +1642,12 @@ Partial Class Settings_Citiroc
         CType(Me.pc_WW, System.ComponentModel.ISupportInitialize).EndInit()
         Me.Panel3.ResumeLayout(False)
         Me.TabControl1.ResumeLayout(False)
-        CType(Me.TrMonoWidth, System.ComponentModel.ISupportInitialize).EndInit()
-        Me.GroupBox4.ResumeLayout(False)
-        Me.GroupBox4.PerformLayout()
+        CType(Me.waitrunled, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.VETOLED, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.GroupBox5.ResumeLayout(False)
+        Me.GroupBox5.PerformLayout()
+        Me.GroupBox6.ResumeLayout(False)
+        Me.GroupBox6.PerformLayout()
         Me.ResumeLayout(False)
 
     End Sub
@@ -1645,4 +1777,15 @@ Partial Class Settings_Citiroc
     Friend WithEvents Label43 As Label
     Friend WithEvents BackgroundWorker1 As System.ComponentModel.BackgroundWorker
     Friend WithEvents cbValidationMode As ComboBox
+    Friend WithEvents RunResetSel As ComboBox
+    Friend WithEvents Label42 As Label
+    Friend WithEvents ResetT0OnRunStart As CheckBox
+    Friend WithEvents Button3 As Button
+    Friend WithEvents keepveto As CheckBox
+    Friend WithEvents waitrun_label As Label
+    Friend WithEvents waitrunled As PictureBox
+    Friend WithEvents Timer1 As Timer
+    Friend WithEvents VETOLED As PictureBox
+    Friend WithEvents GroupBox6 As GroupBox
+    Friend WithEvents GroupBox5 As GroupBox
 End Class

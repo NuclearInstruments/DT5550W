@@ -137,6 +137,16 @@ Public Class pImmediate
 
                 Next
             End If
+            TS.Text = ""
+            TST0.Text = ""
+            TS.Text &= "TS:      ns " & MainForm.LastPacketStatus.TS.ToString.PadRight(16, " ")
+            TST0.Text &= "TS[T0]:  ns " & MainForm.LastPacketStatus.TS0.ToString.PadRight(16, " ")
+            TS.Text &= "TRG:  " & MainForm.LastPacketStatus.TrigID.ToString.PadRight(9, " ")
+            TST0.Text &= "VAL:  " & MainForm.LastPacketStatus.ValID.ToString.PadRight(9, " ")
+            TS.Text &= "ASIC:   " & MainForm.LastPacketStatus.ASICTrig.PadRight(16, " ")
+            TST0.Text &= "TOTAL:  " & MainForm.LastPacketStatus.TotalEvents.ToString.PadRight(16, " ")
+
+            'TST0.Text = MainForm.LastPacketStatus.TS0
         Catch ex As Exception
 
         End Try

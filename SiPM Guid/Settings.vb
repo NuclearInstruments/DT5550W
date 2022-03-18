@@ -547,7 +547,7 @@ Public Class Settings
 
                 End Select
 
-                MainForm.DTList(i).ConfigureT0(t0m, T0Freq.Value)
+                MainForm.DTList(i).ConfigureT0(t0m, T0Freq.Value, False)
                 MainForm.TimePsBin = TimePsBin.Value
             Next
             System.Threading.Thread.Sleep(200)

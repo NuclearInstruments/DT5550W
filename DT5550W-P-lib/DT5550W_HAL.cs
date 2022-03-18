@@ -272,6 +272,17 @@ namespace DT5550W_P_lib
                 CitirocClass.GetBuild(ref build);
         }
 
+        public void GetMagic(ref UInt32 unique)
+        {
+            if (ConnectedAsic == t_AsicModels.PETIROC)
+            {
+                unique = 0X11223344;
+            }
+            if (ConnectedAsic == t_AsicModels.CITIROC)
+                CitirocClass.GetMagic(ref unique);
+        }
+
+
         public void SetASICVeto(bool A1, bool A2, bool A3, bool A4)
         {
             if (ConnectedAsic == t_AsicModels.PETIROC)
@@ -279,12 +290,12 @@ namespace DT5550W_P_lib
             if (ConnectedAsic == t_AsicModels.CITIROC)
                 CitirocClass.SetASICVeto(A1, A2, A3, A4);
         }
-        public void ConfigureT0(T0Mode mode, int T0sw_freq)
+        public void ConfigureT0(T0Mode mode, int T0sw_freq, bool EnableResetOnStartRun)
         {
             if (ConnectedAsic == t_AsicModels.PETIROC)
                 PetirocClass.ConfigureT0(mode, T0sw_freq);
             if (ConnectedAsic == t_AsicModels.CITIROC)
-                CitirocClass.ConfigureT0(mode, T0sw_freq);
+                CitirocClass.ConfigureT0(mode, T0sw_freq, EnableResetOnStartRun);
         }
         public void PulseT0()
         {
@@ -293,6 +304,23 @@ namespace DT5550W_P_lib
             if (ConnectedAsic == t_AsicModels.CITIROC)
                 CitirocClass.PulseT0();
         }
+
+        public void ConfigureRunStartSignal(RunStartMode mode, bool keepvetowaitingrun)
+        {
+            if (ConnectedAsic == t_AsicModels.PETIROC)
+            { }
+            if (ConnectedAsic == t_AsicModels.CITIROC)
+                CitirocClass.ConfigureRunStartSignal(mode, keepvetowaitingrun);
+
+        }
+        public void GetDAQStatus(ref bool isRunning, ref bool isVetod)
+        {
+            if (ConnectedAsic == t_AsicModels.PETIROC)
+            { }
+            if (ConnectedAsic == t_AsicModels.CITIROC)
+                CitirocClass.GetDAQStatus(ref isRunning, ref isVetod);
+        }
+
         public bool GetMonitorPetiroc(ref DT5550W_PETIROC.PetirocMonitorData PMD, uint samples)
         {
             if (ConnectedAsic == t_AsicModels.PETIROC)

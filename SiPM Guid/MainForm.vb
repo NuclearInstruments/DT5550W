@@ -15,6 +15,7 @@ Imports System.Net
 Imports System.Threading
 
 Public Class MainForm
+    Dim MinVersion As Integer() = {22, 3, 17}
     Public DetectorNAME As String = "DETECTOR"
     Public ProcessFakeEvent As Boolean = True
     Public GBL_ASIC_MODEL As t_AsicModels
@@ -113,7 +114,7 @@ Public Class MainForm
     Public sTargetMode As String
 
     Public TriggerModeCharge As Boolean
-
+    Public STATUSisrunnig = False, STATUSisvetoed = False
     Public Enum FileType
         CSV = 0
         BINARY = 1
@@ -821,8 +822,29 @@ Public Class MainForm
 
             AppendToLog(LogMode.mINFO, "Connected to board: " & Connection.ComboBox1.Text)
             Dim build As UInt32
+            Dim magic As UInt32
             newDt.GetBuild(build)
+            newDt.GetMagic(magic)
             AppendToLog(LogMode.mINFO, "Build firmware version: " & Hex(build))
+            If GBL_ASIC_MODEL = t_AsicModels.CITIROC Then
+
+                If magic = &H39593604 Then
+                    AppendToLog(LogMode.mINFO, "Citiroc Firmware Readout for SciDigitizer DETECTED")
+                    Dim V1, V2, V3 As Integer
+                    V1 = Convert.ToInt32(build.ToString("X").PadLeft(8, "0").Substring(0, 2), 10)
+                    V2 = Convert.ToInt32(build.ToString("X").PadLeft(8, "0").Substring(2, 2), 10)
+                    V3 = Convert.ToInt32(build.ToString("X").PadLeft(8, "0").Substring(4, 2), 10)
+                    Dim v = V1 * 10000 + V2 * 100 + V3
+                    Dim vmin = MinVersion(0) * 10000 + MinVersion(1) * 100 + MinVersion(2)
+                    If v < vmin Then
+                        AppendToLog(LogMode.mERROR, "Outdated firmware!")
+                        MsgBox("A valid DT5550W-CIT firmware has been detected but this firmware is outdated. Please update this board firmware before use it with this version of the software", vbExclamation + vbOKOnly)
+                    End If
+                Else
+                    AppendToLog(LogMode.mWARNING, "Invalid or custom firmware detected. Magic register is: " + Hex(magic).PadLeft(8, "0").ToUpper)
+                    MsgBox("This DT5550W is not running an official build of the CITIROC Readout FIRMWARE for SciDigitizer ineed some of the feature could not works. If you are running a custom firmware please be careful to respect the address and pheripherals mapped in this software", vbExclamation + vbOKOnly)
+                End If
+            End If
 
             DTList.Add(newDt)
             AssignDefaultChannelMapping()
@@ -1038,6 +1060,15 @@ Public Class MainForm
     Public AnalogMonitor(1, 1) As UInt64
     Public ConnectedChannels As UInt32
     Public SperctrumSumIndex As UInt32
+    Public Structure tLastStatus
+        Public TS As Double
+        Public TS0 As Double
+        Public TrigID As UInt64
+        Public ValID As UInt64
+        Public ASICTrig As String
+        Public TotalEvents As UInt32
+    End Structure
+    Public LastPacketStatus As tLastStatus
     Public Sub Allocator(EnergyChannels As Integer)
         Dim TotalChannels = 0
         Dim TotalAsic = 0
@@ -1490,6 +1521,7 @@ Public Class MainForm
         Dim thread_acq As New Task(Sub()
                                        While running
                                            board.GetRawBuffer(Buffer, TransferSize, 100, BI.DigitalDataPacketSize, ValidWord)
+                                           board.GetDAQStatus(STATUSisrunnig, STATUSisvetoed)
                                            'dim watch = System.Diagnostics.Stopwatch.StartNew()
                                            board.CitirocPushRawDataInBuffer(Buffer, ValidWord)
 
@@ -1636,7 +1668,17 @@ Public Class MainForm
                             tx.WriteLine(strline)
                             sByteCounter += strline.Length
                         End If
+
                         TotalEvents += 1
+
+                        LastPacketStatus.TS = e.RunEventTimecode_ns
+                        LastPacketStatus.TS0 = e.EventTimecode_ns
+                        LastPacketStatus.TrigID = e.TriggerID
+                        LastPacketStatus.ValID = e.ValidationID
+                        LastPacketStatus.ASICTrig = e.AsicID
+                        LastPacketStatus.TotalEvents = TotalEvents
+
+
                         CurrentTimecode = e.RunEventTimecode_ns
                         Dim good = True
                         If e.Flags = 3 And ProcessFakeEvent = False Then
@@ -1727,8 +1769,10 @@ Public Class MainForm
 
                             newCluster.timecode = first.EventTimecode
                             newCluster.Runtimecode = first.RunEventTimecode
-                            newCluster.timecode_ns = newCluster.timecode * BI.FPGATimecode_ns
-                            newCluster.Runtimecode_ns = newCluster.Runtimecode * BI.FPGATimecode_ns
+                            newCluster.timecode_ns = first.EventTimecode_ns
+                            newCluster.Runtimecode_ns = first.RunEventTimecode_ns
+                            'newCluster.timecode_ns = newCluster.timecode * BI.FPGATimecode_ns
+                            'newCluster.Runtimecode_ns = newCluster.Runtimecode * BI.FPGATimecode_ns
                             newCluster.id = EventCounter
                             CurrentTimecode = newCluster.Runtimecode_ns
 
@@ -1763,8 +1807,10 @@ Public Class MainForm
 
                             newCluster.timecode = timecode_min
                             newCluster.Runtimecode = Runtimecode_min
-                            newCluster.timecode_ns = newCluster.timecode * BI.FPGATimecode_ns
-                            newCluster.Runtimecode_ns = newCluster.Runtimecode * BI.FPGATimecode_ns
+                            Dim AsicTriggered As New List(Of Integer)
+
+                            'newCluster.timecode_ns = newCluster.timecode * BI.FPGATimecode_ns
+                            'newCluster.Runtimecode_ns = newCluster.Runtimecode * BI.FPGATimecode_ns
                             For Each e In newCluster.Events
                                 sTriggerId = IIf(e.TriggerID > sTriggerId, e.TriggerID, sTriggerId)
                                 sValidationId = IIf(e.ValidationID > sValidationId, e.ValidationID, sValidationId)
@@ -1791,9 +1837,9 @@ Public Class MainForm
 
 
                                 e.EventTimecode = timecode_min
-                                e.EventTimecode_ns = e.EventTimecode * BI.FPGATimecode_ns
+                                'e.EventTimecode_ns = e.EventTimecode * BI.FPGATimecode_ns
                                 e.RunEventTimecode = Runtimecode_min
-                                e.RunEventTimecode_ns = e.RunEventTimecode * BI.FPGATimecode_ns
+                                'e.RunEventTimecode_ns = e.RunEventTimecode * BI.FPGATimecode_ns
                                 If EnableSaveFile = True Then   'FILE SAVE
                                     If SaveFileType = FileType.CSV Then
                                         Dim hitNumber(e.hit.Count - 1) As UInt16
@@ -1815,12 +1861,20 @@ Public Class MainForm
                                         FSTaU16(e.chargeHG, True)
                                     End If
                                 End If
+
+                                AsicTriggered.Add(e.AsicID)
+                                LastPacketStatus.TrigID = e.TriggerID
+                                LastPacketStatus.ValID = e.ValidationID
+
                             Next
 
 
-
+                            LastPacketStatus.TS = newCluster.Runtimecode_ns
+                            LastPacketStatus.TS0 = newCluster.timecode_ns
+                            LastPacketStatus.ASICTrig = String.Join(" ", AsicTriggered)
                             Clusters_Citiroc.Add(newCluster)
                             DecodedClusters += 1
+                            LastPacketStatus.TotalEvents = TotalClusters + DecodedClusters
 
                             If EnableSaveFile = True Then       'FILE SAVE
                                 If SaveFileType = FileType.CSV Then
@@ -1947,7 +2001,7 @@ Public Class MainForm
                     End If
                 End If 'if CLUSTER_DECODE
 
-                End If
+            End If
 
 
             tProcTime = Now - ProcTime
@@ -2805,7 +2859,7 @@ Public Class MainForm
     Dim lastCheck As DateTime = Now
 
     Dim lastTempCheck As DateTime = Now
-    Dim running As Boolean
+    Public running As Boolean
     Private Sub Timer1_Tick(sender As Object, e As EventArgs) Handles Timer1.Tick
         If RunCompleted = True Then
             sStatus = "COMPLETED"
@@ -2944,6 +2998,7 @@ Public Class MainForm
 
     Private Sub Timer2_Tick(sender As Object, e As EventArgs) Handles Timer2.Tick
         UpdateOscilloscope()
+
     End Sub
     Public Sub SetBias(onoff As Boolean)
         If onoff = True Then
@@ -3211,6 +3266,9 @@ Public Class MainForm
                 End If
                 dt.SetHVTempFB(CurrentHVON, CurrentHVSet, CurrentHVMax, TempCompCoef, tAv)
             End If
+
+
+
 
 
             plog.UpdateSiPMTemp(tA, tB)
@@ -3504,5 +3562,13 @@ Public Class MainForm
     Private Sub ServerConfigurationToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ServerConfigurationToolStripMenuItem.Click
         Dim s As New ServerConfig()
         s.ShowDialog()
+    End Sub
+
+    Private Sub Timer4_Tick(sender As Object, e As EventArgs) 
+
+    End Sub
+
+    Private Sub ToolStripStatusLabel1_Click(sender As Object, e As EventArgs)
+
     End Sub
 End Class
