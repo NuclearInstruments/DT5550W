@@ -2313,6 +2313,7 @@ Public Class MainForm
 
 
 
+
                 If CurrentProcessMode = ProcessMode.EVENT_DECODE Then
                     While Events.Count > 0
 
@@ -2380,7 +2381,7 @@ Public Class MainForm
                             RawESpectrum(SperctrumSumIndex, spesum_bin) += 1
                         End If
 
-                        TotalEvents += DecodedEvents
+
                         pRT4.PostData(RawESpectrum, RawESpectrum.GetUpperBound(1))
                         pRT5.PostData(RawTSpectrum, RawTSpectrum.GetUpperBound(1))
                         pRT6.PostData(RawHitCounter, RawHitCounter.GetUpperBound(1))
