@@ -297,6 +297,7 @@ namespace DT5550W_P_lib
             read_data = (UInt32)read_data_ptr.ToInt32();
             valid_data = (UInt32)valid_data_ptr.ToInt32();
             mut.ReleaseMutex();
+            //Console.WriteLine("R-MEM[" + address.ToString() + "]: " + count.ToString() + " - " + valid_data);
             return retcode;
         }
 
@@ -308,6 +309,7 @@ namespace DT5550W_P_lib
             mut.WaitOne();
             int res = NI_USB3_WriteReg(data, address, Handle);
             mut.ReleaseMutex();
+            //Console.WriteLine("W-REG[" + address.ToString() + "]: " + data.ToString() );
             return res;
         }
 
@@ -317,7 +319,7 @@ namespace DT5550W_P_lib
             if (!connected) return -100000;
             mut.WaitOne();
             int res = NI_USB3_ReadReg(ref data, address, Handle);
-
+            //Console.WriteLine("R-REG[" + address.ToString() + "]: " + data.ToString());
             mut.ReleaseMutex();
             return res;
         }
