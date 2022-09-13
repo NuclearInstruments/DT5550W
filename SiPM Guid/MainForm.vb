@@ -2055,6 +2055,9 @@ Public Class MainForm
 
 
         End While
+        If Not IsNothing(thread_acq) Then
+            thread_acq.Wait()
+        End If
         If Not IsNothing(tx) Then
             tx.Close()
             AppendToLog(LogMode.mACQUISITION, "File is closed", BI.SerialNumber)
@@ -3431,7 +3434,7 @@ Public Class MainForm
         RUN_TARGET_VALUE = g.TargetValue
         RunCompleted = False
         EnableSaveFile = True
-        SaveFilePath = g.FilePathName
+        SaveFilePath = My.Settings.folderpos & "\" & g.ForcedFileName ' g.FilePathName
 
         sStatus = "RUNNING"
         If g.mode = 0 Then
@@ -3490,14 +3493,14 @@ Public Class MainForm
                         Dim runnumer As UInt32
                         Dim trigtype As UInt32
                         Dim unixtime As UInt32
-                        runnumer = bytesFrom(1) + (bytesFrom(0) << 8)
-                        trigtype = bytesFrom(3) + (bytesFrom(2) << 8)
+                        runnumer = Convert.ToInt32(bytesFrom(1)) + (Convert.ToInt32(bytesFrom(0)) << 8)
+                        trigtype = Convert.ToInt32(bytesFrom(3)) + (Convert.ToInt32(bytesFrom(2)) << 8)
                         networkStream.Read(bytesFrom_cmd, 0, 4)
                         networkStream.Read(bytesFrom, 0, 4)
                         unixtime = Convert.ToInt32(bytesFrom(3)) + (Convert.ToInt32(bytesFrom(2)) << 8) + (Convert.ToInt32(bytesFrom(1)) << 16) + (Convert.ToInt32(bytesFrom(0)) << 24)
                         Dim dd As DateTime = UnixTimeStampToDateTime(unixtime)
                         Dim filename As String =
-                                DetectorNAme &
+                                DetectorNAme & "_" &
                                 runnumer.ToString.PadLeft(5, "0") & "_" &
                                 IIf(trigtype = 1, "BEAM", "CAL") & "_" &
                                 dd.Year & dd.Month.ToString.PadLeft(2, "0") & dd.Day.ToString.PadLeft(2, "0") & "_" &

@@ -542,7 +542,7 @@ const UInt32 SCI_REG_CitirocCfg1_REG_CFG0 = 0x100009;
             BI.DefaultDetectorLayout = t_BoardInfo.t_DefaultDetectorLayout.MATRIX_8x8;
             BI.totalAsics = DLL_ASIC_COUNT;
             BI.channelsPerAsic = 32;
-            BI.DigitalDataPacketSize = 38;
+            BI.DigitalDataPacketSize = 41;
             BI.FPGATimecode_ns = 25;
             BI.Coarse_ns = 25;
             BI.Fine_ns = 0.037;
@@ -1225,7 +1225,15 @@ const UInt32 SCI_REG_CitirocCfg1_REG_CFG0 = 0x100009;
             UInt32 transfer_length = PacketSize * event_count;
             UInt32 read_word = 0;
             UInt32 valid_data = 0;
- 
+            UInt32 fifo_status = 0;
+            phy.NI_USB3_ReadReg_M(ref fifo_status, SCI_REG_CitirocFrame0_STATUS);
+            UInt32 aval_word = fifo_status >> 8;
+
+            UInt32 aval_word_round = aval_word / PacketSize;
+            aval_word_round = aval_word_round * PacketSize;
+
+            transfer_length = transfer_length < aval_word_round ? transfer_length : aval_word_round;
+
             retcode = phy.NI_USB3_ReadData_M(data, (UInt32)transfer_length, SCI_REG_CitirocFrame0_FIFOADDRESS, PHY_LINK.USB_BUS_MODE.STREAMING, (UInt32)timeout, ref read_word, ref valid_data);
 
             valid_word = valid_data;

@@ -355,7 +355,10 @@
 		<row><td>ISX_DEFAULTCOMPONENT15</td><td>{4163D63A-94B0-4D7B-9415-5ED2083BF264}</td><td>WIN8.11</td><td>2</td><td/><td/><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
 		<row><td>ISX_DEFAULTCOMPONENT16</td><td>{59E0B9E5-5BD6-41EE-AEFE-D98F55AB0CB0}</td><td>PrimaryVolumePath</td><td>2</td><td/><td/><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
 		<row><td>ISX_DEFAULTCOMPONENT17</td><td>{9E70BF68-B48B-43A5-86E2-61244056E6A0}</td><td>READOUT_SOFTWARE</td><td>2</td><td/><td/><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
+		<row><td>ISX_DEFAULTCOMPONENT18</td><td>{DD475510-3399-4F52-B329-659B1C3AA548}</td><td>REDIST</td><td>2</td><td/><td/><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
+		<row><td>ISX_DEFAULTCOMPONENT19</td><td>{702DCE98-4C6D-43A5-AC0C-B1022D4D1CDE}</td><td>CITIROCPYTHONDECODE</td><td>2</td><td/><td/><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
 		<row><td>ISX_DEFAULTCOMPONENT2</td><td>{57F90C7F-D470-49C0-BF3E-455514239EA2}</td><td>FIRMWAREUPGRADER</td><td>2</td><td/><td/><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
+		<row><td>ISX_DEFAULTCOMPONENT20</td><td>{662BB146-F07E-40FD-BDA1-F45E8D4A0DD0}</td><td>CITIROCPYTHONDECODE</td><td>2</td><td/><td/><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
 		<row><td>ISX_DEFAULTCOMPONENT3</td><td>{DB3918AD-4246-47F6-AE94-86C57C4979DA}</td><td>DT5550W</td><td>2</td><td/><td/><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
 		<row><td>ISX_DEFAULTCOMPONENT4</td><td>{EF9A1024-2821-4E9F-8A32-23850AAD916C}</td><td>DRIVERS</td><td>2</td><td/><td/><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
 		<row><td>ISX_DEFAULTCOMPONENT5</td><td>{C893747B-577C-4706-B58C-90EF35D274A8}</td><td>FTD3XXDRIVER_WHQLCERTIFIED_V1.3.0.2</td><td>2</td><td/><td/><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
@@ -385,6 +388,8 @@
 		<row><td>WeifenLuo.WinFormsUI.Docking.dll</td><td>{3E8C5147-66BD-4353-A6C3-BBF2ED6AC50B}</td><td>READOUT_SOFTWARE</td><td>2</td><td/><td>weifenluo.winformsui.docking</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
 		<row><td>niusb3_core.dll</td><td>{63E532EC-5397-43E1-832B-BE7D3495F0EE}</td><td>READOUT_SOFTWARE</td><td>2</td><td/><td>niusb3_core.dll</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
 		<row><td>niusb3_core.dll1</td><td>{5FB48E88-36DA-4621-90EB-A076E1182E2D}</td><td>FIRMWAREUPGRADER</td><td>2</td><td/><td>niusb3_core.dll1</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
+		<row><td>vcredist_x86_2012.exe</td><td>{55CA2CD8-E82F-4E1F-B441-F227E2D0B354}</td><td>REDIST</td><td>2</td><td/><td>vcredist_x86_2012.exe</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
+		<row><td>vcredist_x86_2015.exe</td><td>{98E4D87F-9D31-47CE-8D6F-9C4F31FDAEEE}</td><td>REDIST</td><td>2</td><td/><td>vcredist_x86_2015.exe</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
 	</table>
 
 	<table name="Condition">
@@ -1053,11 +1058,9 @@
 		<row><td>SetupCompleteError</td><td>Finish</td><td>DoAction</td><td>CleanUp</td><td>ISSCRIPTRUNNING="1"</td><td>1</td></row>
 		<row><td>SetupCompleteError</td><td>Finish</td><td>DoAction</td><td>ShowMsiLog</td><td>MsiLogFileLocation And (ISSHOWMSILOG="1")</td><td>3</td></row>
 		<row><td>SetupCompleteError</td><td>Finish</td><td>EndDialog</td><td>Exit</td><td>1</td><td>2</td></row>
-		<row><td>SetupCompleteSuccess</td><td>OK</td><td>DoAction</td><td>CleanUp</td><td>ISSCRIPTRUNNING="1"</td><td>3</td></row>
-		<row><td>SetupCompleteSuccess</td><td>OK</td><td>DoAction</td><td>NewCustomAction1</td><td>Not Installed</td><td>1</td></row>
-		<row><td>SetupCompleteSuccess</td><td>OK</td><td>DoAction</td><td>ShowMsiLog</td><td>MsiLogFileLocation And (ISSHOWMSILOG="1") And NOT ISENABLEDWUSFINISHDIALOG</td><td>8</td></row>
-		<row><td>SetupCompleteSuccess</td><td>OK</td><td>EndDialog</td><td>Exit</td><td>1</td><td>4</td></row>
-		<row><td>SetupCompleteSuccess</td><td>OK</td><td>[NewCustomAction1]</td><td>NewCustomAction1</td><td>Not Installed</td><td>2</td></row>
+		<row><td>SetupCompleteSuccess</td><td>OK</td><td>DoAction</td><td>CleanUp</td><td>ISSCRIPTRUNNING="1"</td><td>7</td></row>
+		<row><td>SetupCompleteSuccess</td><td>OK</td><td>DoAction</td><td>ShowMsiLog</td><td>MsiLogFileLocation And (ISSHOWMSILOG="1") And NOT ISENABLEDWUSFINISHDIALOG</td><td>12</td></row>
+		<row><td>SetupCompleteSuccess</td><td>OK</td><td>EndDialog</td><td>Exit</td><td>1</td><td>8</td></row>
 		<row><td>SetupError</td><td>A</td><td>EndDialog</td><td>ErrorAbort</td><td>1</td><td>0</td></row>
 		<row><td>SetupError</td><td>C</td><td>EndDialog</td><td>ErrorCancel</td><td>1</td><td>0</td></row>
 		<row><td>SetupError</td><td>I</td><td>EndDialog</td><td>ErrorIgnore</td><td>1</td><td>0</td></row>
@@ -1095,6 +1098,8 @@
 	<table name="CreateFolder">
 		<col key="yes" def="s72">Directory_</col>
 		<col key="yes" def="s72">Component_</col>
+		<row><td>CITIROCPYTHONDECODE</td><td>ISX_DEFAULTCOMPONENT19</td></row>
+		<row><td>CITIROCPYTHONDECODE</td><td>ISX_DEFAULTCOMPONENT20</td></row>
 		<row><td>DRIVERS</td><td>FTD3XXDriver_WHQLCertified_v1.3.0.2_Installer.exe</td></row>
 		<row><td>DRIVERS</td><td>ISX_DEFAULTCOMPONENT4</td></row>
 		<row><td>DT5550W</td><td>ISX_DEFAULTCOMPONENT3</td></row>
@@ -1125,7 +1130,10 @@
 		<row><td>INSTALLDIR</td><td>ISX_DEFAULTCOMPONENT15</td></row>
 		<row><td>INSTALLDIR</td><td>ISX_DEFAULTCOMPONENT16</td></row>
 		<row><td>INSTALLDIR</td><td>ISX_DEFAULTCOMPONENT17</td></row>
+		<row><td>INSTALLDIR</td><td>ISX_DEFAULTCOMPONENT18</td></row>
+		<row><td>INSTALLDIR</td><td>ISX_DEFAULTCOMPONENT19</td></row>
 		<row><td>INSTALLDIR</td><td>ISX_DEFAULTCOMPONENT2</td></row>
+		<row><td>INSTALLDIR</td><td>ISX_DEFAULTCOMPONENT20</td></row>
 		<row><td>INSTALLDIR</td><td>ISX_DEFAULTCOMPONENT3</td></row>
 		<row><td>INSTALLDIR</td><td>ISX_DEFAULTCOMPONENT4</td></row>
 		<row><td>INSTALLDIR</td><td>ISX_DEFAULTCOMPONENT5</td></row>
@@ -1155,6 +1163,8 @@
 		<row><td>INSTALLDIR</td><td>WeifenLuo.WinFormsUI.Docking.dll</td></row>
 		<row><td>INSTALLDIR</td><td>niusb3_core.dll</td></row>
 		<row><td>INSTALLDIR</td><td>niusb3_core.dll1</td></row>
+		<row><td>INSTALLDIR</td><td>vcredist_x86_2012.exe</td></row>
+		<row><td>INSTALLDIR</td><td>vcredist_x86_2015.exe</td></row>
 		<row><td>PrimaryVolumePath</td><td>ISX_DEFAULTCOMPONENT16</td></row>
 		<row><td>READOUT_SOFTWARE</td><td>DT5550W_P_lib.dll</td></row>
 		<row><td>READOUT_SOFTWARE</td><td>FTD3XX.dll</td></row>
@@ -1169,6 +1179,9 @@
 		<row><td>READOUT_SOFTWARE</td><td>SciDigitizerAsic.exe</td></row>
 		<row><td>READOUT_SOFTWARE</td><td>WeifenLuo.WinFormsUI.Docking.dll</td></row>
 		<row><td>READOUT_SOFTWARE</td><td>niusb3_core.dll</td></row>
+		<row><td>REDIST</td><td>ISX_DEFAULTCOMPONENT18</td></row>
+		<row><td>REDIST</td><td>vcredist_x86_2012.exe</td></row>
+		<row><td>REDIST</td><td>vcredist_x86_2015.exe</td></row>
 		<row><td>WIN10</td><td>ISX_DEFAULTCOMPONENT7</td></row>
 		<row><td>WIN101</td><td>ISX_DEFAULTCOMPONENT12</td></row>
 		<row><td>WIN7</td><td>ISX_DEFAULTCOMPONENT8</td></row>
@@ -1203,10 +1216,12 @@
 		<row><td>ISSelfRegisterFinalize</td><td>1</td><td>ISSELFREG.DLL</td><td>ISSelfRegisterFinalize</td><td/><td/></row>
 		<row><td>ISSetAllUsers</td><td>257</td><td>SetAllUsers.dll</td><td>SetAllUsers</td><td/><td/></row>
 		<row><td>ISUnSelfRegisterFiles</td><td>3073</td><td>ISSELFREG.DLL</td><td>ISUnSelfRegisterFiles</td><td/><td/></row>
-		<row><td>NewCustomAction1</td><td>18</td><td>ftd3xxdriver_whqlcertified_v</td><td/><td/><td/></row>
 		<row><td>SetARPINSTALLLOCATION</td><td>51</td><td>ARPINSTALLLOCATION</td><td>[INSTALLDIR]</td><td/><td/></row>
 		<row><td>SetAllUsersProfileNT</td><td>51</td><td>ALLUSERSPROFILE</td><td>[%SystemRoot]\Profiles\All Users</td><td/><td/></row>
 		<row><td>ShowMsiLog</td><td>226</td><td>SystemFolder</td><td>[SystemFolder]notepad.exe "[MsiLogFileLocation]"</td><td/><td>Shows Property-driven MSI Log</td></row>
+		<row><td>install_driver</td><td>3154</td><td>ftd3xxdriver_whqlcertified_v</td><td/><td/><td/></row>
+		<row><td>install_vcx2012</td><td>1106</td><td>vcredist_x86_2012.exe</td><td>/install /norestart /passive</td><td/><td/></row>
+		<row><td>install_vcx2015</td><td>1106</td><td>vcredist_x86_2015.exe</td><td>/install /norestart /passive</td><td/><td/></row>
 		<row><td>setAllUsersProfile2K</td><td>51</td><td>ALLUSERSPROFILE</td><td>[%ALLUSERSPROFILE]</td><td/><td/></row>
 		<row><td>setUserProfileNT</td><td>51</td><td>USERPROFILE</td><td>[%USERPROFILE]</td><td/><td/></row>
 	</table>
@@ -1270,6 +1285,7 @@
 		<row><td>AdminToolsFolder</td><td>TARGETDIR</td><td>.:Admint~1|AdminTools</td><td/><td>0</td><td/></row>
 		<row><td>AppDataFolder</td><td>TARGETDIR</td><td>.:APPLIC~1|Application Data</td><td/><td>0</td><td/></row>
 		<row><td>CAEN___NUCLEARINSTRUMENTS</td><td>ProgramFilesFolder</td><td>CAEN-N~1|CAEN - NuclearInstruments</td><td/><td>0</td><td/></row>
+		<row><td>CITIROCPYTHONDECODE</td><td>DT5550W</td><td>CITIRO~1|CitirocPythonDecode</td><td/><td>0</td><td/></row>
 		<row><td>CommonAppDataFolder</td><td>TARGETDIR</td><td>.:Common~1|CommonAppData</td><td/><td>0</td><td/></row>
 		<row><td>CommonFiles64Folder</td><td>TARGETDIR</td><td>.:Common64</td><td/><td>0</td><td/></row>
 		<row><td>CommonFilesFolder</td><td>TARGETDIR</td><td>.:Common</td><td/><td>0</td><td/></row>
@@ -1294,6 +1310,8 @@
 		<row><td>NEW_FOLDER_13</td><td>TARGETDIR</td><td>NEW_FOLDER_13</td><td/><td>0</td><td/></row>
 		<row><td>NEW_FOLDER_14</td><td>TARGETDIR</td><td>NEW_FOLDER_14</td><td/><td>0</td><td/></row>
 		<row><td>NEW_FOLDER_15</td><td>TARGETDIR</td><td>NEW_FOLDER_15</td><td/><td>0</td><td/></row>
+		<row><td>NEW_FOLDER_16</td><td>TARGETDIR</td><td>NEW_FOLDER_16</td><td/><td>0</td><td/></row>
+		<row><td>NEW_FOLDER_17</td><td>TARGETDIR</td><td>NEW_FOLDER_17</td><td/><td>0</td><td/></row>
 		<row><td>NetHoodFolder</td><td>TARGETDIR</td><td>.:NetHood</td><td/><td>0</td><td/></row>
 		<row><td>PersonalFolder</td><td>TARGETDIR</td><td>.:Personal</td><td/><td>0</td><td/></row>
 		<row><td>PrimaryVolumePath</td><td>TARGETDIR</td><td>.:Primar~1|PrimaryVolumePath</td><td/><td>0</td><td/></row>
@@ -1302,6 +1320,7 @@
 		<row><td>ProgramFilesFolder</td><td>TARGETDIR</td><td>.:PROGRA~1|program files</td><td/><td>0</td><td/></row>
 		<row><td>ProgramMenuFolder</td><td>TARGETDIR</td><td>.:Programs</td><td/><td>3</td><td/></row>
 		<row><td>READOUT_SOFTWARE</td><td>DT5550W</td><td>READOU~1|Readout Software</td><td/><td>0</td><td/></row>
+		<row><td>REDIST</td><td>INSTALLDIR</td><td>redist</td><td/><td>0</td><td/></row>
 		<row><td>RecentFolder</td><td>TARGETDIR</td><td>.:Recent</td><td/><td>0</td><td/></row>
 		<row><td>SendToFolder</td><td>TARGETDIR</td><td>.:SendTo</td><td/><td>3</td><td/></row>
 		<row><td>StartMenuFolder</td><td>TARGETDIR</td><td>.:STARTM~1|Start Menu</td><td/><td>3</td><td/></row>
@@ -2034,7 +2053,10 @@
 		<row><td>AlwaysInstall</td><td>ISX_DEFAULTCOMPONENT15</td></row>
 		<row><td>AlwaysInstall</td><td>ISX_DEFAULTCOMPONENT16</td></row>
 		<row><td>AlwaysInstall</td><td>ISX_DEFAULTCOMPONENT17</td></row>
+		<row><td>AlwaysInstall</td><td>ISX_DEFAULTCOMPONENT18</td></row>
+		<row><td>AlwaysInstall</td><td>ISX_DEFAULTCOMPONENT19</td></row>
 		<row><td>AlwaysInstall</td><td>ISX_DEFAULTCOMPONENT2</td></row>
+		<row><td>AlwaysInstall</td><td>ISX_DEFAULTCOMPONENT20</td></row>
 		<row><td>AlwaysInstall</td><td>ISX_DEFAULTCOMPONENT3</td></row>
 		<row><td>AlwaysInstall</td><td>ISX_DEFAULTCOMPONENT4</td></row>
 		<row><td>AlwaysInstall</td><td>ISX_DEFAULTCOMPONENT5</td></row>
@@ -2064,6 +2086,8 @@
 		<row><td>AlwaysInstall</td><td>WeifenLuo.WinFormsUI.Docking.dll</td></row>
 		<row><td>AlwaysInstall</td><td>niusb3_core.dll</td></row>
 		<row><td>AlwaysInstall</td><td>niusb3_core.dll1</td></row>
+		<row><td>AlwaysInstall</td><td>vcredist_x86_2012.exe</td></row>
+		<row><td>AlwaysInstall</td><td>vcredist_x86_2015.exe</td></row>
 	</table>
 
 	<table name="File">
@@ -2079,6 +2103,7 @@
 		<col def="I4">ISAttributes</col>
 		<col def="S72">ISComponentSubFolder_</col>
 		<row><td>bjstools.file.json.dll</td><td>BjSTools.File.Json.dll</td><td>BJSTOO~1.DLL|BjSTools.File.Json.dll</td><td>0</td><td/><td/><td/><td>1</td><td>E:\GIT\DT5550WSoftware\OpenHardwareUpgrader_exe\BjSTools.File.Json.dll</td><td>1</td><td/></row>
+		<row><td>citiroc_decode.py</td><td>ISX_DEFAULTCOMPONENT20</td><td>CITIRO~1.PY|citiroc_decode.py</td><td>0</td><td/><td/><td/><td>1</td><td>E:\GIT\DT5550WSoftware\decode_script\citiroc_decode.py</td><td>1</td><td/></row>
 		<row><td>config.json</td><td>ISX_DEFAULTCOMPONENT17</td><td>CONFIG~1.JSO|config.json</td><td>0</td><td/><td/><td/><td>1</td><td>E:\GIT\DT5550WSoftware\BIN\config.json</td><td>1</td><td/></row>
 		<row><td>dt5550w_p_lib.dll</td><td>DT5550W_P_lib.dll</td><td>DT5550~1.DLL|DT5550W-P-lib.dll</td><td>0</td><td/><td/><td/><td>1</td><td>E:\GIT\DT5550WSoftware\BIN\DT5550W-P-lib.dll</td><td>1</td><td/></row>
 		<row><td>ftd3xx.dll</td><td>FTD3XX.dll</td><td>FTD3XX.dll</td><td>0</td><td/><td/><td/><td>1</td><td>E:\GIT\DT5550WSoftware\BIN\FTD3XX.dll</td><td>1</td><td/></row>
@@ -2125,6 +2150,8 @@
 		<row><td>renci.sshnet.dll</td><td>Renci.SshNet.dll</td><td>RENCIS~1.DLL|Renci.SshNet.dll</td><td>0</td><td/><td/><td/><td>1</td><td>E:\GIT\DT5550WSoftware\OpenHardwareUpgrader_exe\Renci.SshNet.dll</td><td>1</td><td/></row>
 		<row><td>scidigitizerasic.exe</td><td>SciDigitizerAsic.exe</td><td>SCIDIG~1.EXE|SciDigitizerAsic.exe</td><td>0</td><td/><td/><td/><td>1</td><td>E:\GIT\DT5550WSoftware\BIN\SciDigitizerAsic.exe</td><td>1</td><td/></row>
 		<row><td>scidk_lib.dll</td><td>SCIDK_Lib.dll</td><td>SCIDK_~1.DLL|SCIDK_Lib.dll</td><td>0</td><td/><td/><td/><td>1</td><td>E:\GIT\DT5550WSoftware\OpenHardwareUpgrader_exe\SCIDK_Lib.dll</td><td>1</td><td/></row>
+		<row><td>vcredist_x86_2012.exe</td><td>vcredist_x86_2012.exe</td><td>VCREDI~1.EXE|vcredist_x86_2012.exe</td><td>0</td><td/><td/><td/><td>1</td><td>E:\GIT\DT5550WSoftware\redist\vcredist_x86_2012.exe</td><td>1</td><td/></row>
+		<row><td>vcredist_x86_2015.exe</td><td>vcredist_x86_2015.exe</td><td>VCREDI~1.EXE|vcredist_x86_2015.exe</td><td>0</td><td/><td/><td/><td>1</td><td>E:\GIT\DT5550WSoftware\redist\vcredist_x86_2015.exe</td><td>1</td><td/></row>
 		<row><td>wdfcoinstaller01011.dll</td><td>WdfCoinstaller01011.dll</td><td>WDFCOI~1.DLL|WdfCoinstaller01011.dll</td><td>0</td><td/><td/><td/><td>1</td><td>E:\GIT\DT5550WSoftware\Drivers\FTD3XXDriver_WHQLCertified_v1.3.0.2\x32\Win7\WdfCoinstaller01011.dll</td><td>1</td><td/></row>
 		<row><td>wdfcoinstaller01011.dll1</td><td>WdfCoinstaller01011.dll1</td><td>WDFCOI~1.DLL|WdfCoinstaller01011.dll</td><td>0</td><td/><td/><td/><td>1</td><td>E:\GIT\DT5550WSoftware\Drivers\FTD3XXDriver_WHQLCertified_v1.3.0.2\x32\Win8\WdfCoinstaller01011.dll</td><td>1</td><td/></row>
 		<row><td>wdfcoinstaller01011.dll2</td><td>WdfCoinstaller01011.dll2</td><td>WDFCOI~1.DLL|WdfCoinstaller01011.dll</td><td>0</td><td/><td/><td/><td>1</td><td>E:\GIT\DT5550WSoftware\Drivers\FTD3XXDriver_WHQLCertified_v1.3.0.2\x32\Win8.1\WdfCoinstaller01011.dll</td><td>1</td><td/></row>
@@ -2289,7 +2316,10 @@
 		<row><td>ISX_DEFAULTCOMPONENT15</td><td/><td/><td>_B7149732_61F0_4C2E_B1C0_72CEE8B43909_FILTER</td><td/><td/><td/><td/></row>
 		<row><td>ISX_DEFAULTCOMPONENT16</td><td/><td/><td>_3691BBD1_1791_4E98_B929_68C1F80D64BB_FILTER</td><td/><td/><td/><td/></row>
 		<row><td>ISX_DEFAULTCOMPONENT17</td><td/><td/><td>_259131BD_87DE_4FDB_916D_CA40C8151A64_FILTER</td><td/><td/><td/><td/></row>
+		<row><td>ISX_DEFAULTCOMPONENT18</td><td/><td/><td>_568BC507_A372_48EC_A27E_3C5069EDC459_FILTER</td><td/><td/><td/><td/></row>
+		<row><td>ISX_DEFAULTCOMPONENT19</td><td/><td/><td>_D2D9DA31_AAA1_49F9_AF69_FCE93DB8B0DA_FILTER</td><td/><td/><td/><td/></row>
 		<row><td>ISX_DEFAULTCOMPONENT2</td><td/><td/><td>_735A0A56_2A1E_4EF3_8CCD_9CB9BD64AF60_FILTER</td><td/><td/><td/><td/></row>
+		<row><td>ISX_DEFAULTCOMPONENT20</td><td/><td/><td>_DAC4824C_A73D_4567_A5FD_525A70BF1FA9_FILTER</td><td/><td/><td/><td/></row>
 		<row><td>ISX_DEFAULTCOMPONENT3</td><td/><td/><td>_5859C7DE_E11B_4E3F_9382_6747F1406D87_FILTER</td><td/><td/><td/><td/></row>
 		<row><td>ISX_DEFAULTCOMPONENT4</td><td/><td/><td>_95B8488C_B0EA_4B71_9348_102238AFA947_FILTER</td><td/><td/><td/><td/></row>
 		<row><td>ISX_DEFAULTCOMPONENT5</td><td/><td/><td>_ECE3E594_704A_432D_BFA1_8D97706247CB_FILTER</td><td/><td/><td/><td/></row>
@@ -2319,6 +2349,8 @@
 		<row><td>WeifenLuo.WinFormsUI.Docking.dll</td><td/><td/><td>_218D0DDB_11BD_4ADE_BE23_7FDC3DAB1240_FILTER</td><td/><td/><td/><td/></row>
 		<row><td>niusb3_core.dll</td><td/><td/><td>_A898BE45_42B3_48AB_B2B8_1E033CD60ABF_FILTER</td><td/><td/><td/><td/></row>
 		<row><td>niusb3_core.dll1</td><td/><td/><td>_91E9E15D_3CAF_4D45_B073_89363FC17E6B_FILTER</td><td/><td/><td/><td/></row>
+		<row><td>vcredist_x86_2012.exe</td><td/><td/><td>_57B0F28F_F276_400E_90A4_0C2B4446198D_FILTER</td><td/><td/><td/><td/></row>
+		<row><td>vcredist_x86_2015.exe</td><td/><td/><td>_CDB34D61_1306_41A8_853A_1E6C9E7AA65C_FILTER</td><td/><td/><td/><td/></row>
 	</table>
 
 	<table name="ISCustomActionReference">
@@ -2874,7 +2906,6 @@
 		<col def="I2">ISSetupLocation</col>
 		<col def="S255">ISReleaseFlags</col>
 		<row><td>_B9E6E95A_45AE_4610_BF50_946B190D1171_</td><td>Microsoft .NET Framework 4.5 Full.prq</td><td/><td>1</td><td/></row>
-		<row><td>_D1F31A98_F501_48AE_8554_D325B3C0B5BB_</td><td>Microsoft Visual C++ 2015 Redistributable Package (x86).prq</td><td/><td>1</td><td/></row>
 	</table>
 
 	<table name="ISSetupType">
@@ -4249,6 +4280,9 @@
 		<row><td>WriteEnvironmentStrings</td><td/><td>5200</td><td>WriteEnvironmentStrings</td><td/></row>
 		<row><td>WriteIniValues</td><td/><td>5100</td><td>WriteIniValues</td><td/></row>
 		<row><td>WriteRegistryValues</td><td/><td>5000</td><td>WriteRegistryValues</td><td/></row>
+		<row><td>install_driver</td><td>Not Installed</td><td>6407</td><td/><td/></row>
+		<row><td>install_vcx2012</td><td>Not Installed</td><td>6405</td><td/><td/></row>
+		<row><td>install_vcx2015</td><td>Not Installed</td><td>6402</td><td/><td/></row>
 		<row><td>setAllUsersProfile2K</td><td>VersionNT &gt;= 500</td><td>980</td><td/><td/></row>
 		<row><td>setUserProfileNT</td><td>VersionNT</td><td>960</td><td/><td/></row>
 	</table>
@@ -4652,7 +4686,7 @@ UwBpAG4AZwBsAGUASQBtAGEAZwBlAAEARQB4AHAAcgBlAHMAcwA=
 		<row><td>PROGMSG_IIS_ROLLBACKWEBSERVICEEXTENSIONS</td><td>##IDS_PROGMSG_IIS_ROLLBACKWEBSERVICEEXTENSIONS##</td><td/></row>
 		<row><td>ProductCode</td><td>{F18C06CF-4791-455D-A253-78E1F3DA0F89}</td><td/></row>
 		<row><td>ProductName</td><td>DT5550W Readout Software</td><td/></row>
-		<row><td>ProductVersion</td><td>22.3.0002</td><td/></row>
+		<row><td>ProductVersion</td><td>22.9.0001</td><td/></row>
 		<row><td>ProgressType0</td><td>install</td><td/></row>
 		<row><td>ProgressType1</td><td>Installing</td><td/></row>
 		<row><td>ProgressType2</td><td>installed</td><td/></row>
@@ -4815,7 +4849,7 @@ UwBpAG4AZwBsAGUASQBtAGEAZwBlAAEARQB4AHAAcgBlAHMAcwA=
 		<col def="S255">ISShortcutName</col>
 		<col def="I4">ISAttributes</col>
 		<row><td>NewShortcut1</td><td>newfolder2</td><td>##ID_STRING12##</td><td>SciDigitizerAsic.exe</td><td>[INSTALLDIR]DT5550W\Readout Software\SciDigitizerAsic.exe</td><td/><td/><td/><td>NewShortcut1_C6DE760322464CADB792ACCBC7C7E66A.exe</td><td>1</td><td>1</td><td>READOUT_SOFTWARE</td><td/><td/><td/><td/><td/><td/><td/></row>
-		<row><td>NewShortcut2</td><td>newfolder1</td><td>##ID_STRING13##</td><td>OpenHardwareUpgrader.exe</td><td>[INSTALLDIR]FirmwareUpgrader\OpenHardwareUpgrader.exe</td><td/><td/><td/><td>NewShortcut2_7F7BF9E986754C7DA779859DF9090854.exe</td><td>1</td><td>1</td><td/><td/><td/><td/><td/><td/><td/><td/></row>
+		<row><td>NewShortcut2</td><td>newfolder1</td><td>##ID_STRING13##</td><td>OpenHardwareUpgrader.exe</td><td>[INSTALLDIR]FirmwareUpgrader\OpenHardwareUpgrader.exe</td><td/><td/><td/><td>NewShortcut2_7F7BF9E986754C7DA779859DF9090854.exe</td><td>1</td><td>1</td><td>FIRMWAREUPGRADER</td><td/><td/><td/><td/><td/><td/><td/></row>
 	</table>
 
 	<table name="Signature">
