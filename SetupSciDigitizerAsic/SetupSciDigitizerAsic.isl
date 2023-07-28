@@ -4686,7 +4686,7 @@ UwBpAG4AZwBsAGUASQBtAGEAZwBlAAEARQB4AHAAcgBlAHMAcwA=
 		<row><td>PROGMSG_IIS_ROLLBACKWEBSERVICEEXTENSIONS</td><td>##IDS_PROGMSG_IIS_ROLLBACKWEBSERVICEEXTENSIONS##</td><td/></row>
 		<row><td>ProductCode</td><td>{F18C06CF-4791-455D-A253-78E1F3DA0F89}</td><td/></row>
 		<row><td>ProductName</td><td>DT5550W Readout Software</td><td/></row>
-		<row><td>ProductVersion</td><td>22.9.0001</td><td/></row>
+		<row><td>ProductVersion</td><td>23.7.0001</td><td/></row>
 		<row><td>ProgressType0</td><td>install</td><td/></row>
 		<row><td>ProgressType1</td><td>Installing</td><td/></row>
 		<row><td>ProgressType2</td><td>installed</td><td/></row>

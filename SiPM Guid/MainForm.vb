@@ -3493,11 +3493,11 @@ Public Class MainForm
                         Dim runnumer As UInt32
                         Dim trigtype As UInt32
                         Dim unixtime As UInt32
-                        runnumer = Convert.ToInt32(bytesFrom(1)) + (Convert.ToInt32(bytesFrom(0)) << 8)
-                        trigtype = Convert.ToInt32(bytesFrom(3)) + (Convert.ToInt32(bytesFrom(2)) << 8)
+                        runnumer = Convert.ToUInt32(bytesFrom(1)) + (Convert.ToUInt32(bytesFrom(0)) << 8)
+                        trigtype = Convert.ToUInt32(bytesFrom(3)) + (Convert.ToUInt32(bytesFrom(2)) << 8)
                         networkStream.Read(bytesFrom_cmd, 0, 4)
                         networkStream.Read(bytesFrom, 0, 4)
-                        unixtime = Convert.ToInt32(bytesFrom(3)) + (Convert.ToInt32(bytesFrom(2)) << 8) + (Convert.ToInt32(bytesFrom(1)) << 16) + (Convert.ToInt32(bytesFrom(0)) << 24)
+                        unixtime = Convert.ToUInt32(bytesFrom(3)) + (Convert.ToUInt32(bytesFrom(2)) << 8) + (Convert.ToUInt32(bytesFrom(1)) << 16) + (Convert.ToUInt32(bytesFrom(0)) << 24)
                         Dim dd As DateTime = UnixTimeStampToDateTime(unixtime)
                         Dim filename As String =
                                 DetectorNAme & "_" &
